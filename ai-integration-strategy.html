@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FAMASO — AI Integration Strategy 2026</title>
+<style>
+  :root {
+    --blue-50: #E6F1FB; --blue-200: #85B7EB; --blue-600: #185FA5; --blue-800: #0C447C;
+    --amber-50: #FAEEDA; --amber-200: #EF9F27; --amber-600: #854F0B; --amber-800: #633806;
+    --green-50: #EAF3DE; --green-200: #97C459; --green-600: #3B6D11; --green-800: #27500A;
+    --purple-50: #EEEDFE; --purple-200: #AFA9EC; --purple-600: #534AB7; --purple-800: #3C3489;
+    --teal-50: #E1F5EE; --teal-200: #5DCAA5; --teal-600: #0F6E56; --teal-800: #085041;
+    --coral-50: #FAECE7; --coral-200: #F0997B; --coral-600: #993C1D; --coral-800: #712B13;
+    --gray-50: #F1EFE8; --gray-200: #B4B2A9; --gray-600: #5F5E5A; --gray-800: #444441;
+    --text: #1a1a18; --text-sec: #5a5955; --text-ter: #8a8880;
+    --bg: #ffffff; --bg-sec: #f5f4f0; --bg-ter: #eeecea;
+    --border: rgba(0,0,0,0.12); --border-light: rgba(0,0,0,0.07);
+    --radius: 8px; --radius-lg: 14px;
+    --font: -apple-system, 'Helvetica Neue', Arial, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: var(--font); color: var(--text); background: var(--bg-ter); font-size: 15px; line-height: 1.65; }
+  
+  /* NAV */
+  .nav { position: sticky; top: 0; z-index: 100; background: #fff; border-bottom: 0.5px solid var(--border); padding: 0 40px; display: flex; gap: 0; overflow-x: auto; }
+  .nav a { padding: 14px 18px; font-size: 13px; font-weight: 500; color: var(--text-sec); text-decoration: none; white-space: nowrap; border-bottom: 2px solid transparent; transition: color 0.15s, border-color 0.15s; }
+  .nav a:hover { color: var(--text); }
+  .nav a.active { color: var(--text); border-bottom-color: var(--text); }
+
+  /* HEADER */
+  .header { background: var(--text); color: #fff; padding: 52px 40px 44px; }
+  .header-label { font-size: 11px; font-weight: 500; letter-spacing: 0.12em; text-transform: uppercase; opacity: 0.45; margin-bottom: 12px; }
+  .header h1 { font-size: 34px; font-weight: 500; letter-spacing: -0.5px; line-height: 1.2; margin-bottom: 10px; }
+  .header-sub { font-size: 15px; opacity: 0.55; max-width: 560px; line-height: 1.6; }
+  .header-meta { display: flex; gap: 24px; margin-top: 28px; }
+  .header-meta span { font-size: 12px; opacity: 0.4; }
+
+  /* LAYOUT */
+  .page { max-width: 960px; margin: 0 auto; padding: 0 40px 80px; }
+  .section { padding: 52px 0 0; }
+  .section-header { display: flex; align-items: flex-start; gap: 16px; margin-bottom: 28px; }
+  .section-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; margin-top: 7px; }
+  .section-title { font-size: 22px; font-weight: 500; letter-spacing: -0.3px; }
+  .section-desc { font-size: 14px; color: var(--text-sec); margin-top: 4px; max-width: 640px; line-height: 1.6; }
+  .divider { border: none; border-top: 0.5px solid var(--border-light); margin: 48px 0 0; }
+
+  /* CARDS */
+  .card { background: var(--bg); border: 0.5px solid var(--border-light); border-radius: var(--radius-lg); padding: 22px 24px; }
+  .card + .card { margin-top: 12px; }
+  .card-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
+  .card-num { font-size: 11px; font-weight: 600; color: var(--text-ter); }
+  .card-title { font-size: 15px; font-weight: 500; line-height: 1.4; }
+  .card-body { font-size: 14px; color: var(--text-sec); line-height: 1.65; }
+  .card-body p + p { margin-top: 8px; }
+  .card-footer { margin-top: 14px; display: flex; gap: 8px; flex-wrap: wrap; }
+
+  /* GRID */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+  .grid-4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 10px; }
+
+  /* TAGS */
+  .tag { display: inline-flex; align-items: center; padding: 3px 10px; border-radius: 100px; font-size: 11px; font-weight: 500; }
+  .tag-quick { background: var(--teal-50); color: var(--teal-800); }
+  .tag-medium { background: var(--amber-50); color: var(--amber-800); }
+  .tag-long { background: var(--purple-50); color: var(--purple-800); }
+  .tag-critical { background: #fcebeb; color: #501313; }
+  .tag-commercial { background: var(--blue-50); color: var(--blue-800); }
+  .tag-operations { background: var(--amber-50); color: var(--amber-800); }
+  .tag-finance { background: var(--green-50); color: var(--green-800); }
+  .tag-leadership { background: var(--purple-50); color: var(--purple-800); }
+  .tag-gates { background: var(--teal-50); color: var(--teal-800); }
+  .tag-platform { background: var(--coral-50); color: var(--coral-800); }
+
+  /* GATE TIMELINE */
+  .gate-flow { display: flex; align-items: stretch; gap: 0; margin: 28px 0; }
+  .gate-item { flex: 1; }
+  .gate-block { padding: 18px 16px; border-radius: var(--radius); font-size: 13px; height: 100%; }
+  .gate-arrow { display: flex; align-items: center; padding: 0 4px; color: var(--text-ter); font-size: 18px; flex-shrink: 0; }
+  .gate-label { font-weight: 500; font-size: 12px; margin-bottom: 4px; }
+  .gate-from { font-size: 11px; opacity: 0.7; margin-bottom: 10px; }
+  .gate-ai { font-size: 11px; line-height: 1.5; }
+  .g1 { background: var(--teal-50); color: var(--teal-800); }
+  .g2 { background: var(--amber-50); color: var(--amber-800); }
+  .g3 { background: var(--green-50); color: var(--green-800); }
+  .g4 { background: var(--purple-50); color: var(--purple-800); }
+
+  /* METRIC CARDS */
+  .metric-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 20px 0; }
+  .metric { background: var(--bg-sec); border-radius: var(--radius); padding: 16px; }
+  .metric-label { font-size: 11px; color: var(--text-ter); margin-bottom: 6px; font-weight: 500; }
+  .metric-value { font-size: 20px; font-weight: 500; }
+  .metric-sub { font-size: 11px; color: var(--text-ter); margin-top: 3px; }
+
+  /* PHASE TIMELINE */
+  .phases { display: grid; grid-template-columns: repeat(4, 1fr); gap: 0; margin: 24px 0; border: 0.5px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
+  .phase { padding: 20px 18px; border-right: 0.5px solid var(--border); }
+  .phase:last-child { border-right: none; }
+  .phase-num { font-size: 10px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--text-ter); margin-bottom: 6px; }
+  .phase-title { font-size: 14px; font-weight: 500; margin-bottom: 4px; }
+  .phase-timing { font-size: 11px; color: var(--text-ter); margin-bottom: 12px; }
+  .phase-items { list-style: none; font-size: 12px; color: var(--text-sec); line-height: 1.8; }
+  .phase-items li::before { content: "— "; color: var(--text-ter); }
+
+  /* FUTURE STATE */
+  .future-card { background: var(--bg); border: 0.5px solid var(--border-light); border-radius: var(--radius); padding: 18px 20px; }
+  .future-card + .future-card { margin-top: 10px; }
+  .future-title { font-size: 14px; font-weight: 500; margin-bottom: 6px; }
+  .future-body { font-size: 13px; color: var(--text-sec); line-height: 1.6; }
+
+  /* CASH TIMELINE */
+  .cash-flow { background: var(--bg); border: 0.5px solid var(--border-light); border-radius: var(--radius-lg); padding: 24px; margin: 20px 0; }
+  .cash-track { display: flex; align-items: center; gap: 0; margin-bottom: 16px; }
+  .cash-node { text-align: center; flex: 1; }
+  .cash-dot { width: 10px; height: 10px; border-radius: 50%; margin: 0 auto 6px; }
+  .cash-dot-blue { background: var(--blue-600); }
+  .cash-dot-amber { background: var(--amber-200); }
+  .cash-dot-green { background: var(--green-600); }
+  .cash-dot-teal { background: var(--teal-600); }
+  .cash-label { font-size: 11px; font-weight: 500; }
+  .cash-sub { font-size: 10px; color: var(--text-ter); margin-top: 2px; }
+  .cash-line { flex: 1; height: 1px; background: var(--border); position: relative; margin-bottom: 18px; }
+  .cash-line-highlight { flex: 1; height: 2px; background: #E24B4A; margin-bottom: 17px; }
+  .cash-desc { font-size: 12px; color: var(--text-sec); margin-top: 6px; }
+
+  /* SILO BOUNDARY */
+  .boundary { display: grid; grid-template-columns: 1fr auto 1fr; gap: 16px; align-items: stretch; margin: 20px 0; }
+  .boundary-side { background: var(--bg-sec); border-radius: var(--radius); padding: 16px; font-size: 12px; }
+  .boundary-side-title { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 10px; }
+  .boundary-arrow { display: flex; align-items: center; color: var(--text-ter); font-size: 22px; }
+  .boundary-items { list-style: none; line-height: 1.8; color: var(--text-sec); }
+  .boundary-items li::before { content: "· "; color: var(--text-ter); }
+
+  /* CALLOUT */
+  .callout { background: var(--bg-sec); border-left: 3px solid var(--text); border-radius: 0 var(--radius) var(--radius) 0; padding: 14px 18px; margin: 16px 0; font-size: 13px; color: var(--text-sec); line-height: 1.6; }
+  .callout strong { color: var(--text); font-weight: 500; }
+
+  /* DEPENDENCIES */
+  .dep-row { display: flex; gap: 8px; align-items: flex-start; padding: 10px 0; border-bottom: 0.5px solid var(--border-light); font-size: 13px; }
+  .dep-row:last-child { border-bottom: none; }
+  .dep-label { font-weight: 500; min-width: 180px; }
+  .dep-body { color: var(--text-sec); }
+
+  /* PRINT */
+  @media print {
+    .nav { display: none; }
+    .header { background: #000; -webkit-print-color-adjust: exact; }
+    body { background: #fff; }
+    .section { page-break-inside: avoid; }
+  }
+
+  /* RESPONSIVE */
+  @media (max-width: 700px) {
+    .page { padding: 0 20px 60px; }
+    .header { padding: 36px 20px 32px; }
+    .nav { padding: 0 12px; }
+    .grid-2, .grid-3, .grid-4, .metric-grid, .phases { grid-template-columns: 1fr; }
+    .gate-flow { flex-direction: column; }
+    .gate-arrow { transform: rotate(90deg); align-self: center; padding: 4px 0; }
+    .header h1 { font-size: 26px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-label">Confidential · Advisory Document</div>
+  <h1>FAMASO — AI Integration Strategy</h1>
+  <div class="header-sub">A complete map of where AI augments the current operating model, the integration sequence, and what becomes possible once the foundations are in place.</div>
+  <div class="header-meta">
+    <span>Prepared for: Bryn Jones, GM · Mikhil Kotak, MD</span>
+    <span>April 2026</span>
+    <span>Covers: All three silos · Four gates · FM Farm platform</span>
+  </div>
+</div>
+
+<nav class="nav">
+  <a href="#overview" class="active">Overview</a>
+  <a href="#gates">Gate System</a>
+  <a href="#commercial">Commercial</a>
+  <a href="#operations">Operations</a>
+  <a href="#finance">Finance</a>
+  <a href="#leadership">Leadership</a>
+  <a href="#comms">Client Comms</a>
+  <a href="#platform">FM Farm</a>
+  <a href="#roadmap">Roadmap</a>
+  <a href="#future">Future State</a>
+</nav>
+
+<div class="page">
+
+  <!-- OVERVIEW -->
+  <div class="section" id="overview">
+    <div class="section-header">
+      <div class="section-dot" style="background: var(--text);"></div>
+      <div>
+        <div class="section-title">Strategic Overview</div>
+        <div class="section-desc">Why FAMASO is unusually well-suited for AI integration — and what the primary value targets are.</div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <strong>The core insight:</strong> FAMASO's gate system is already the right structure for AI. Gates produce defined inputs, apply binary tests (complete/incomplete), and create clear accountability handoffs. AI doesn't need to redesign this — it enforces it, accelerates it, and reports on it. The process is the integration surface.
+    </div>
+
+    <div class="grid-3" style="margin-top: 20px;">
+      <div class="card">
+        <div class="card-title" style="margin-bottom: 8px;">The gates are AI-native</div>
+        <div class="card-body">Every gate has a defined checklist, a binary pass/fail test, a timing SLA, and a named accountable person. These are exactly the conditions under which AI performs best — structured inputs, clear rules, measurable outputs.</div>
+      </div>
+      <div class="card">
+        <div class="card-title" style="margin-bottom: 8px;">The cash gap is the primary target</div>
+        <div class="card-body">35–70 days between job completion and cash receipt. Every process improvement on the left side of that chain — Gate 2 evidence, invoice production, AR chasing — directly reduces working capital risk without any client negotiation.</div>
+      </div>
+      <div class="card">
+        <div class="card-title" style="margin-bottom: 8px;">Stabilise first, automate second</div>
+        <div class="card-body">The Finance silo's own principle applies across the business: only automate a process that is consistent and correct. AI enforcing a broken gate makes it break faster. The sequence is: gates running → AI enforcing → AI reporting → AI predicting.</div>
+      </div>
+    </div>
+
+    <div style="margin-top: 28px;">
+      <div class="metric-grid">
+        <div class="metric">
+          <div class="metric-label">Gates with defined checklists</div>
+          <div class="metric-value">4</div>
+          <div class="metric-sub">All AI-checkable on day one</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">Days in cash conversion gap</div>
+          <div class="metric-value">35–70</div>
+          <div class="metric-sub">Target: reduce by 8–12 days with AI</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">Finance Admin scope</div>
+          <div class="metric-value">1 person</div>
+          <div class="metric-sub">Enterprise-level mandate · AI essential</div>
+        </div>
+        <div class="metric">
+          <div class="metric-label">Highest margin risk point</div>
+          <div class="metric-value">Variations</div>
+          <div class="metric-sub">6-step process · currently manual</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="margin-top: 28px;">
+      <div style="font-size: 13px; font-weight: 500; color: var(--text-sec); margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.07em;">Priority legend</div>
+      <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+        <span class="tag tag-quick">Quick win · M1–3</span>
+        <span class="tag tag-medium">Medium term · M3–6</span>
+        <span class="tag tag-long">Longer term · M6–18</span>
+        <span class="tag tag-critical">Prerequisite · Do first</span>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- GATE SYSTEM -->
+  <div class="section" id="gates">
+    <div class="section-header">
+      <div class="section-dot" style="background: var(--teal-600);"></div>
+      <div>
+        <div class="section-title">Gate System AI Integration</div>
+        <div class="section-desc">The four gates are the primary AI integration surface. Each gate has defined inputs, a checklist, a timing SLA, and named accountability — all conditions where AI performs at its best.</div>
+      </div>
+    </div>
+
+    <div class="gate-flow">
+      <div class="gate-item">
+        <div class="gate-block g1">
+          <div class="gate-label">Gate 1 · Mobilisation</div>
+          <div class="gate-from">Commercial → Operations · 1 business day</div>
+          <div class="gate-ai">8-item completeness check · Tier classification · SLA countdown · Deficiency report in plain language</div>
+        </div>
+      </div>
+      <div class="gate-arrow">›</div>
+      <div class="gate-item">
+        <div class="gate-block g2">
+          <div class="gate-label">Field Gate · Crew Briefing</div>
+          <div class="gate-from">Ops Manager → Senior Supervisor · Pre-day-one</div>
+          <div class="gate-ai">Briefing doc pre-populated · Digital sign-off · SWMS status check · Day-1 evidence prompt triggered</div>
+        </div>
+      </div>
+      <div class="gate-arrow">›</div>
+      <div class="gate-item">
+        <div class="gate-block g3">
+          <div class="gate-label">Gate 2 · Invoice Readiness</div>
+          <div class="gate-from">Operations → Finance · 24–48hrs post-completion</div>
+          <div class="gate-ai">Daily evidence prompting · Running completeness score · Auto-notify Finance · Variation check on submission</div>
+        </div>
+      </div>
+      <div class="gate-arrow">›</div>
+      <div class="gate-item">
+        <div class="gate-block g4">
+          <div class="gate-label">Gate 3 · Performance Pack</div>
+          <div class="gate-from">Finance → Leadership · 3–5 days post-month-end</div>
+          <div class="gate-ai">Xero data aggregation · Exception detection · Named owner suggestion · SLA enforcement</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card" style="margin-top: 4px;">
+      <div class="card-header">
+        <div>
+          <div class="card-num">01</div>
+          <div class="card-title">Gate 1 — Automated Completeness Enforcement</div>
+        </div>
+        <div style="display:flex; gap:6px; flex-wrap:wrap; justify-content: flex-end;">
+          <span class="tag tag-quick">Quick win</span>
+          <span class="tag tag-gates">Gate 1</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <p>The Mobilisation Pack has 8 defined required components. Today, the Operations Coordinator reviews this manually within 4 business hours of receipt. AI checks the pack the moment it arrives — before a human reviews it — and either confirms completeness or produces a deficiency report in plain language, specifying which items are missing and what they should contain.</p>
+        <p>Auto-Tier classification: AI analyses the pack contents (contract value, client type, site familiarity, crew complexity, subcontractor involvement) and suggests Tier A, B, or C — triggering the correct workflow depth automatically. This removes the administrative overhead of manually categorising jobs and reduces misclassification.</p>
+        <p>SLA enforcement: A countdown timer fires from the moment a deal is marked Closed-Won. Alerts at 18 hours and 23 hours prompt the State Sales Manager. A missed deadline triggers an automatic notification to the Head of Commercial. First-pass acceptance rate is tracked and reported in Gate 3.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-num">02</div>
+          <div class="card-title">Field Gate — Pre-Populated Briefing & Digital Sign-Off</div>
+        </div>
+        <div style="display:flex; gap:6px; flex-wrap:wrap; justify-content: flex-end;">
+          <span class="tag tag-medium">Medium term</span>
+          <span class="tag tag-gates">Field Gate</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <p>The Field Gate has a 20-point checklist across 5 categories (Scope & Commercial, Site & Access, Crew & Resources, Safety, Sign-Off). Today this is prepared manually by the State Operations Manager before the briefing. AI pre-populates the briefing document directly from the accepted Gate 1 pack — scope items, client contacts, site access details, crew allocation, equipment requirements.</p>
+        <p>The State Ops Manager reviews and completes the gaps rather than building from scratch. The Senior Supervisor signs off digitally with timestamp recorded. The Operations Administrator cannot schedule crew until sign-off is confirmed — the system enforces this hard rule rather than relying on process discipline alone. On sign-off, a Day-1 evidence collection prompt is automatically triggered to the Senior Supervisor's mobile.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-num">03</div>
+          <div class="card-title">Gate 2 — Continuous Evidence Collection & Completeness Scoring</div>
+        </div>
+        <div style="display:flex; gap:6px; flex-wrap:wrap; justify-content: flex-end;">
+          <span class="tag tag-medium">Medium term</span>
+          <span class="tag tag-gates">Gate 2</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <p>The hardest discipline problem in the business. Gate 2 must be built from day one — but without a system enforcing daily evidence collection, the pack is assembled retrospectively after completion, causing invoice delays. AI solves this mechanically rather than culturally.</p>
+        <p>Daily mobile prompts go to the Senior Supervisor: photos with scope item labels, timesheet submission by end of day. A running completeness score (0–100%) is visible on the State Ops Manager's dashboard throughout the job. When a job is marked complete, if the pack is below a set threshold, an alert fires before the submission attempt. Finance is notified automatically on acceptance; if the pack is returned, a deficiency report specifies exactly what is missing, routing it to the right person. Any undocumented variation detected at submission blocks the pack from reaching Finance until resolved.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-num">04</div>
+          <div class="card-title">Gate 3 — Auto-Assembly from Xero with Exception Detection</div>
+        </div>
+        <div style="display:flex; gap:6px; flex-wrap:wrap; justify-content: flex-end;">
+          <span class="tag tag-long">Longer term</span>
+          <span class="tag tag-gates">Gate 3</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <p>The Gate 3 Performance Pack has 9 defined components — all derived from data that will exist in Xero and the job management system. Today the Finance Administrator builds this manually. Once Phase 2 data infrastructure is in place, AI assembles the pack from live data: P&L by state and service line, AR aging buckets, DSO calculation, 4-week cashflow forecast, margin variance by job.</p>
+        <p>Exception detection: AI flags any metric outside tolerance (margin variance >X%, AR over 60 days above 10%, Gate 2 submission timing outliers) and suggests a named owner for each exception based on job ownership and silo accountability. The GM reviews and approves the pack before distribution — the role shifts from building to verifying. The pack arrives on time every month because the data exists and the assembly is automated.</p>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- COMMERCIAL -->
+  <div class="section" id="commercial">
+    <div class="section-header">
+      <div class="section-dot" style="background: var(--blue-600);"></div>
+      <div>
+        <div class="section-title">Commercial Silo (Silo 01)</div>
+        <div class="section-desc">Pipeline intelligence, quote generation, Scope of Works authorship, and Gate 1 pack quality. The "everyone is a CRM" model is AI-amplified when each person has better information and better tools.</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-num">01</div>
+          <div class="card-title">CRM Intelligence Layer — Proactive Pipeline Management</div>
+        </div>
+        <div style="display:flex; gap:6px; flex-wrap:wrap; justify-content: flex-end;">
+          <span class="tag tag-medium">Medium term</span>
+          <span class="tag tag-commercial">Commercial</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <p>The commercial model is proactive — the team creates demand, not just responds to it. AI makes this executable at scale. Service Agreement renewal alerts fire 90, 60, and 30 days before expiry, with the renewal draft pre-prepared. Dormant account flags surface accounts with no activity in a configurable period. Next-best-action prompting suggests the right outreach for each account based on recent activity, relationship depth, and portfolio opportunity.</p>
+        <p>Portfolio gap analysis identifies sites or services within an existing account relationship that FAMASO doesn't yet hold — surfacing the organic growth conversations that don't require new client acquisition. Win/loss pattern analysis over time reveals which job types, client segments, and price points close, and which don't — informing quoting strategy and pipeline prioritisation.</p>
+      </div>
+      <div class="card-footer">
+        <span class="tag tag-commercial">Pierre South</span>
+        <span class="tag tag-commercial">State Sales Managers</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-num">02</div>
+          <div class="card-title">Quote Generation & Margin Enforcement</div>
+        </div>
+        <div style="display:flex; gap:6px; flex-wrap:wrap; justify-content: flex-end;">
+          <span class="tag tag-medium">Medium term</span>
+          <span class="tag tag-commercial">Commercial</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <p>Sales Managers input the job parameters (service type, site, scope summary, duration, crew requirements) and AI generates a structured first-draft quote. The Sales Manager reviews, adjusts, and approves — they're editing, not building from scratch. Margin floor enforcement is automatic: if a quote falls below the approved guardrail, it is flagged before submission, not after.</p>
+        <p>Follow-up sequencing is automated: Day 3, Day 7, and Day 14 prompts with suggested messaging that references the specific quote and the client's history. This removes the discipline of manual follow-up from the equation — the system does it without the Sales Manager needing to remember.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-num">03</div>
+          <div class="card-title">Scope of Works Generation & Completeness Checking</div>
+        </div>
+        <div style="display:flex; gap:6px; flex-wrap:wrap; justify-content: flex-end;">
+          <span class="tag tag-medium">Medium term</span>
+          <span class="tag tag-commercial">Commercial</span>
+          <span class="tag tag-critical">High leverage</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <p>The Scope of Works is the document everything downstream depends on. Errors here compound through Gate 1, through the Field Gate, through Gate 2, and into client disputes. It is also the document most commonly written under time pressure without a structured template.</p>
+        <p>AI generates a first-draft SoW from structured inputs: service type, site address, client, key inclusions, duration, and billing triggers. The draft is checked against a completeness model — are inclusions specific? Are exclusions explicit? Are assumptions stated? Are billing triggers defined? Are variation rules included? Comparison against similar prior jobs flags clauses that are typically present but missing in the current draft. The Sales Manager reviews and edits rather than authors from scratch — reducing the risk of the most expensive category of error in the business.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-num">04</div>
+          <div class="card-title">Gate 1 Pack Pre-Submission Quality Check</div>
+        </div>
+        <div style="display:flex; gap:6px; flex-wrap:wrap; justify-content: flex-end;">
+          <span class="tag tag-quick">Quick win</span>
+          <span class="tag tag-commercial">Commercial</span>
+          <span class="tag tag-gates">Gate 1</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <p>Gate 1 returns are tracked as a leadership quality signal. Every return means a delay, a conversation, and a productivity cost on both sides. The fastest way to reduce the return rate is to check the pack before it leaves Commercial.</p>
+        <p>Before the State Sales Manager submits a Gate 1 pack, AI runs the same 8-item completeness check that Operations will run on receipt. Deficiencies are flagged in plain language before submission — not after rejection. The SLA countdown from Closed-Won is visible to the Sales Manager throughout pack assembly. First-pass acceptance rate is fed back to the Head of Commercial weekly, creating a quality feedback loop that doesn't depend on manual reporting.</p>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- OPERATIONS -->
+  <div class="section" id="operations">
+    <div class="section-header">
+      <div class="section-dot" style="background: var(--amber-600);"></div>
+      <div>
+        <div class="section-title">Operations Silo (Silo 02)</div>
+        <div class="section-desc">The highest AI leverage point in the business. Gate 1 intake, Field Handover, Gate 2 evidence collection, variation flag management, safety compliance, and scheduling — all have defined rules that AI can enforce mechanically.</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-num">01</div>
+          <div class="card-title">Gate 1 Intake — Auto-Review, Tier Classification & Scheduling Trigger</div>
+        </div>
+        <div style="display:flex; gap:6px; flex-wrap:wrap; justify-content: flex-end;">
+          <span class="tag tag-quick">Quick win</span>
+          <span class="tag tag-operations">Operations</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <p>The Operations Administrator has a 4-business-hour window to review Gate 1 packs on receipt. For a growing national business, this manual review is a bottleneck. AI performs the completeness check on receipt, presents the Administrator with a clear pass/deficiency report, and — on acceptance — suggests Tier A, B, or C classification based on the pack contents (contract value, client tier, site familiarity, scope complexity, subcontractor requirements).</p>
+        <p>On acceptance, the job automatically enters the forward schedule system with the correct workflow template for its tier. The Field Handover preparation task is triggered to the relevant State Ops Manager. Nothing mobilises without this trigger — the hard rule is enforced by the system, not by the Administrator checking manually.</p>
+      </div>
+      <div class="card-footer">
+        <span class="tag tag-operations">Kevin Docherty</span>
+        <span class="tag tag-operations">Operations Administrator</span>
+        <span class="tag tag-operations">State Ops Managers</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-num">02</div>
+          <div class="card-title">Variation Flag Process — Digitised & Tracked End-to-End</div>
+        </div>
+        <div style="display:flex; gap:6px; flex-wrap:wrap; justify-content: flex-end;">
+          <span class="tag tag-medium">Medium term</span>
+          <span class="tag tag-operations">Operations</span>
+          <span class="tag tag-critical">Margin-critical</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <p>Variations are where FAMASO's margin most commonly erodes. The 6-step process is defined and correct — the problem is that steps 3 and 6 (simultaneous notification and formal documentation) depend on manual discipline under time pressure, on site, mid-job.</p>
+        <p>Step 3 becomes a structured mobile form: Senior Supervisor photographs the out-of-scope work, describes it in structured fields, and submits. The system simultaneously notifies the State Ops Manager and Head of Operations — within seconds, not minutes. Status tracking follows each variation through all 6 steps with timestamps. Gate 2 submission is automatically blocked if undocumented variations exist in the job record — the "no undocumented variation in the Gate 2 pack" rule becomes a system constraint, not a Finance request. The audit trail is maintained without manual chasing, and every variation is traceable from field identification to client approval to invoice.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-num">03</div>
+          <div class="card-title">WHS & Safety Compliance — SWMS Review Assist & Incident Reporting</div>
+        </div>
+        <div style="display:flex; gap:6px; flex-wrap:wrap; justify-content: flex-end;">
+          <span class="tag tag-medium">Medium term</span>
+          <span class="tag tag-operations">Operations</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <p>The WHS Manager reviews and edits SWMS documents before they go to clients, approves safety packs on high-risk jobs, and leads incident investigations. These are high-stakes, time-sensitive activities that currently depend entirely on one person's bandwidth and knowledge.</p>
+        <p>AI assists SWMS review by cross-referencing the document against a library of hazard controls for the specific job type — flagging controls that are typically required but missing, or controls that appear generic rather than site-specific. Safety pack completeness checking confirms all required documents are present before client delivery. Incident report drafting: the WHS Manager inputs structured facts (who, what, when, where, initial response, witnesses) and AI produces a compliant first draft for review and sign-off. Certification tracking for staff and subcontractors generates expiry alerts 60 and 30 days in advance — the Operations Administrator acts rather than discovers at mobilisation.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-num">04</div>
+          <div class="card-title">Operations Administrator — Scheduling, Logistics & Compliance Hub</div>
+        </div>
+        <div style="display:flex; gap:6px; flex-wrap:wrap; justify-content: flex-end;">
+          <span class="tag tag-medium">Medium term</span>
+          <span class="tag tag-operations">Operations</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <p>The Operations Administrator sits at the intersection of every automated workflow — Gate 1 intake, national forward schedule, subcontractor register, staff certifications, timesheets, travel/accommodation, and Gate 2 documentation support. This is a high-volume coordination role that is currently entirely manual.</p>
+        <p>National schedule conflict detection: AI flags scheduling conflicts before they're confirmed (crew double-booked, equipment allocated to overlapping jobs, travel timing impossible between states). Subcontractor register maintenance: insurance and licence expiry alerts with documentation requests sent automatically. Timesheet exception flagging: unsigned, incomplete, or late timesheets are flagged to the relevant State Ops Manager rather than discovered at Gate 2. Travel and accommodation: AI generates logistics options (flights, accommodation, site proximity) for out-of-area jobs, reducing the research burden to a selection decision.</p>
+      </div>
+    </div>
+
+    <div class="callout">
+      <strong>The Gate 2 discipline problem in plain terms:</strong> Gate 2 evidence must be built from day one. Without a system enforcing daily collection, it is assembled retrospectively — the moment most likely to cause invoice delay. AI solves this mechanically: daily prompts, running completeness score, completion-triggered alert. The discipline becomes a system behaviour, not a personal one.
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- FINANCE -->
+  <div class="section" id="finance">
+    <div class="section-header">
+      <div class="section-dot" style="background: var(--green-600);"></div>
+      <div>
+        <div class="section-title">Finance Silo (Silo 03)</div>
+        <div class="section-desc">The most automation-ready silo — it already has a three-phase build plan and a sequenced automation roadmap. AI accelerates every phase. The Finance Administrator role carries enterprise-level scope for one person: AI is not optional here, it is structural.</div>
+      </div>
+    </div>
+
+    <!-- Cash flow timeline -->
+    <div class="cash-flow">
+      <div style="font-size: 12px; font-weight: 500; margin-bottom: 16px; color: var(--text-sec); text-transform: uppercase; letter-spacing: 0.07em;">The 35–70 Day Cash Conversion Gap · Every AI improvement shortens the left side</div>
+      <div class="cash-track">
+        <div class="cash-node">
+          <div class="cash-dot cash-dot-blue"></div>
+          <div class="cash-label">D0</div>
+          <div class="cash-sub">Job completes</div>
+        </div>
+        <div class="cash-line-highlight"></div>
+        <div class="cash-node">
+          <div class="cash-dot cash-dot-amber"></div>
+          <div class="cash-label">D2–3</div>
+          <div class="cash-sub">Gate 2 accepted</div>
+        </div>
+        <div class="cash-line-highlight"></div>
+        <div class="cash-node">
+          <div class="cash-dot cash-dot-green"></div>
+          <div class="cash-label">D4–5</div>
+          <div class="cash-sub">Invoice issued</div>
+        </div>
+        <div class="cash-line"></div>
+        <div class="cash-node">
+          <div class="cash-dot cash-dot-teal"></div>
+          <div class="cash-label">D33–65</div>
+          <div class="cash-sub">Cash received</div>
+        </div>
+      </div>
+      <div class="cash-desc">The highlighted segment (D0 → invoice) is entirely within FAMASO's control. Gate 2 evidence collected daily, accepted within 4 hours, invoice issued within 48 hours. With AI enforcement, D0 → invoice target becomes 3–4 days consistently.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-num">01</div>
+          <div class="card-title">Invoice Production — Auto-Draft from Gate 2 Acceptance</div>
+        </div>
+        <div style="display:flex; gap:6px; flex-wrap:wrap; justify-content: flex-end;">
+          <span class="tag tag-long">Longer term</span>
+          <span class="tag tag-finance">Finance</span>
+          <span class="tag tag-critical">High cash value</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <p>When Gate 2 is accepted, a draft invoice is automatically generated in Xero from the job data — client name, PO number, billing triggers, amount, line items, and any variation amounts confirmed in the pack. The Finance Administrator reviews and approves the draft rather than building the invoice from scratch. This removes one manual step from the most time-sensitive part of the cash conversion chain.</p>
+        <p>The 48-hour invoice SLA is monitored automatically. An alert fires at 40 hours if a Gate 2-accepted job has no invoice issued. Finance confirmation (amount, PO reference, due date) is automatically sent to the relevant Sales Manager on issue — Sales is never surprised by billing status.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-num">02</div>
+          <div class="card-title">Accounts Receivable — Automated Chasing with Escalation Rules</div>
+        </div>
+        <div style="display:flex; gap:6px; flex-wrap:wrap; justify-content: flex-end;">
+          <span class="tag tag-medium">Medium term</span>
+          <span class="tag tag-finance">Finance</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <p>AR chasing is currently manual. At scale, manual chasing is inconsistent — the volume grows proportionally with revenue, the discipline doesn't. AI sends reminders at Day 7, Day 14, and Day 30 past due date. Finance sets the rules; the system executes them consistently for every invoice, every time.</p>
+        <p>Escalation rules: at Day 45, the relevant Sales Manager is automatically notified for any Tier 1 client — relationship-sensitive collection stays with the people who own the relationship. At Day 60, the GM and Head of Commercial are flagged. At Day 90+, the MD receives immediate notification. Any account over 90 days is highlighted in the Gate 3 pack. The Finance Administrator's role shifts from chasing to managing exceptions and genuine disputes — the part that requires judgement, not the part that requires remembering.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-num">03</div>
+          <div class="card-title">Cashflow Forecasting — CRM-Connected 13-Week Rolling View</div>
+        </div>
+        <div style="display:flex; gap:6px; flex-wrap:wrap; justify-content: flex-end;">
+          <span class="tag tag-long">Longer term</span>
+          <span class="tag tag-finance">Finance</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <p>The 13-week rolling cashflow forecast is currently built and maintained manually. It becomes meaningful — and accurate — when the inputs are live data rather than manual entries. CRM Closed-Won jobs appear in the revenue forecast automatically based on job value, billing triggers, and client payment history. AP schedule from confirmed subcontractor and supplier invoices populates the outflow side. AR aging data updates the inflow timing based on actual payment behaviour per client.</p>
+        <p>Risk flags fire automatically when a 3-week shortfall is projected — early enough for the GM to act, not discover. Forecast accuracy improves over time as historical payment behaviour data builds. The Finance Administrator reviews and adjusts for known anomalies rather than building the forecast from scratch each week.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-num">04</div>
+          <div class="card-title">Gate 3 Pack — AI-Assisted Assembly with Exception Detection</div>
+        </div>
+        <div style="display:flex; gap:6px; flex-wrap:wrap; justify-content: flex-end;">
+          <span class="tag tag-long">Longer term</span>
+          <span class="tag tag-finance">Finance</span>
+          <span class="tag tag-leadership">Leadership</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <p>The Gate 3 Performance Pack has 9 defined components — all derivable from data in Xero and the job management system. Once Phase 2 data infrastructure is stable, AI assembles the pack from live data: P&L by state and service line pulled from Xero, AR aging buckets calculated, DSO computed and trended, 4-week cashflow forecast derived from AP/AR positions, margin variance calculated per job closed in the month.</p>
+        <p>Exception detection: AI identifies any metric outside tolerance, surfaces the relevant exception with the associated job or client, and suggests a named owner based on silo accountability and job ownership. The GM reviews the assembled pack and assigns owners before distribution — the role shifts from assembling to verifying and deciding. The SLT meeting runs from a pack that arrives on time because the data is live, not because the Finance Administrator worked over the weekend.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div>
+          <div class="card-num">05</div>
+          <div class="card-title">Xero Automation — Bank Rules, AP, and Payroll Integration</div>
+        </div>
+        <div style="display:flex; gap:6px; flex-wrap:wrap; justify-content: flex-end;">
+          <span class="tag tag-quick">Quick win</span>
+          <span class="tag tag-finance">Finance</span>
+        </div>
+      </div>
+      <div class="card-body">
+        <p>Following the Finance silo's own automation sequence: bank feed rules auto-coding transactions from known suppliers and recurring payments; all recurring bills entered as Xero repeating transactions; AR reminders configured within Xero or via a connected tool (Chaser, Debtor Daddy). Payroll connected directly to the timesheet system — State Ops Manager approves timesheets in the field; Finance approves the payroll run before processing. These are Phase 1 and Phase 2 actions — foundational infrastructure that makes AI on top of it meaningful rather than unreliable.</p>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- LEADERSHIP -->
+  <div class="section" id="leadership">
+    <div class="section-header">
+      <div class="section-dot" style="background: var(--purple-600);"></div>
+      <div>
+        <div class="section-title">Leadership Layer</div>
+        <div class="section-desc">Mikhil and Bryn have fundamentally different information needs. AI serves them differently: Mikhil needs external, forward-looking signal. Bryn needs internal, system-health intelligence. Neither needs more information — they need better information, on time.</div>
+      </div>
+    </div>
+
+    <div class="grid-2">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-num">MD · Mikhil Kotak</div>
+            <div class="card-title">Outward Intelligence — Pipeline, Prospects & Strategic Signal</div>
+          </div>
+          <span class="tag tag-leadership">MD</span>
+        </div>
+        <div class="card-body">
+          <p>Mikhil's time is at its highest value when it's on Tier 1 acquisition and strategic pipeline — not chasing internal status. AI provides the signal that keeps him informed without requiring him to dig for it.</p>
+          <p style="margin-top: 10px;"><strong style="font-weight: 500;">Prospect intelligence briefings:</strong> Before a significant client meeting, AI assembles a briefing pack — company background, recent activity, known facilities portfolio, known competitors, relevant FAMASO capability match — so Mikhil walks in informed rather than prepared ad hoc.</p>
+          <p style="margin-top: 10px;"><strong style="font-weight: 500;">Tier 1 pipeline dashboard:</strong> Live view of prospect count, conversion rate, revenue at risk, and deal stage — updated from CRM without manual reporting.</p>
+          <p style="margin-top: 10px;"><strong style="font-weight: 500;">Strategic market scanning:</strong> Alerts when relevant market events occur — major tendering activity, competitor moves, relevant industry developments — so Mikhil's external conversations are timely.</p>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-num">GM · Bryn Jones</div>
+            <div class="card-title">Operational Intelligence — Gate Health, Exceptions & System Performance</div>
+          </div>
+          <span class="tag tag-leadership">GM</span>
+        </div>
+        <div class="card-body">
+          <p>Bryn owns gate system integrity. The GM's value is in acting on system signals — not discovering them. AI provides a live operational picture that surfaces issues before they escalate to leadership.</p>
+          <p style="margin-top: 10px;"><strong style="font-weight: 500;">Gate health dashboard:</strong> Gate 1 first-pass acceptance rate by state, Gate 2 submission timing by tier, Gate 3 timeliness — all live, all trending. A gate health decline in a specific state is visible within days, not at month end.</p>
+          <p style="margin-top: 10px;"><strong style="font-weight: 500;">Exception register:</strong> Every active exception with named owner, status, and days open. Bryn sees what is unresolved and who owns it — without asking.</p>
+          <p style="margin-top: 10px;"><strong style="font-weight: 500;">Cross-silo friction alerts:</strong> If Operations is returning Gate 1 packs at an elevated rate from a specific state, or Finance is returning Gate 2 packs consistently from a specific Ops Manager — the pattern is surfaced before it becomes a conversation.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- CLIENT COMMS -->
+  <div class="section" id="comms">
+    <div class="section-header">
+      <div class="section-dot" style="background: var(--gray-600);"></div>
+      <div>
+        <div class="section-title">Client Communication Model</div>
+        <div class="section-desc">Three silos, three lanes, zero overlap. AI assists each silo with drafting and routing — and enforces lane discipline by flagging communications that cross silo boundaries.</div>
+      </div>
+    </div>
+
+    <div class="grid-3">
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-num">Sales · Pre-Gate 1</div>
+            <div class="card-title">Relationship & Commercial Drafting</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <p>AI drafts proposals, Service Agreements, and follow-up sequences. Variation offers drafted for Sales Manager review before going to the client — never routed directly from Operations. Renewal proposals generated from job history and current pricing. Commercial escalation responses drafted from relationship context.</p>
+        </div>
+        <div class="card-footer"><span class="tag tag-commercial">Commercial lane</span></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-num">Operations · Gate 1 → Gate 2</div>
+            <div class="card-title">Progress, Safety & Completion Drafting</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <p>Progress update templates pre-populated from daily field reports. Completion confirmation and client sign-off requests generated from job data. SWMS and compliance document cover letters templated per client requirements. Sales Manager is automatically CC'd on all outgoing Operations-to-client communications — never out of the loop.</p>
+        </div>
+        <div class="card-footer"><span class="tag tag-operations">Operations lane</span></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <div class="card-num">Finance · Post-Gate 2</div>
+            <div class="card-title">Invoice, Collection & Dispute Routing</div>
+          </div>
+        </div>
+        <div class="card-body">
+          <p>Invoice cover communications generated from job data on issue. Payment reminder sequences automated at Day 7, 14, and 30. If a client disputes an invoice — Finance flags to Sales, not responds directly. The dispute routing is automated: Finance receives the dispute, logs it, and routes to Sales with the commercial context attached. Finance does not own the client conversation on disputes.</p>
+        </div>
+        <div class="card-footer"><span class="tag tag-finance">Finance lane</span></div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- FM FARM PLATFORM -->
+  <div class="section" id="platform">
+    <div class="section-header">
+      <div class="section-dot" style="background: var(--coral-600);"></div>
+      <div>
+        <div class="section-title">FM Farm Platform</div>
+        <div class="section-desc">React + Node.js + AWS Serverless is a modern, AI-compatible foundation. The main gaps are testing, documentation, and tooling — all addressable without a rewrite. Two tracks: developer AI tooling (immediate) and platform AI features to build (phased).</div>
+      </div>
+    </div>
+
+    <div class="callout">
+      <strong>Critical prerequisite:</strong> The absence of automated testing is the single most important gap to address before AI-generated code enters production. Without tests, there is no safety net. No AI-accelerated development without Jest coverage first.
+    </div>
+
+    <div style="margin-top: 20px;">
+      <div style="font-size: 13px; font-weight: 500; margin-bottom: 12px; color: var(--text-sec);">Immediate actions — before AI tools are introduced</div>
+      <div class="dep-row"><div class="dep-label"><span class="tag tag-critical">Urgent</span> AWS DB Backups</div><div class="dep-body">Configure AWS RDS automated backups now. No excuses — data loss risk is existential. Owner: Prasanna.</div></div>
+      <div class="dep-row"><div class="dep-label"><span class="tag tag-critical">Urgent</span> Node 18 → 22</div><div class="dep-body">Upgrade in progress — complete this before layering anything on top. Node 22 is the minimum for AI tooling compatibility. Owner: Prasanna.</div></div>
+      <div class="dep-row"><div class="dep-label"><span class="tag tag-critical">High</span> Jest Testing</div><div class="dep-body">Introduce unit testing framework as the first development team action. AI-generated code requires a test safety net to deploy safely. Owner: Prasanna + team.</div></div>
+      <div class="dep-row"><div class="dep-label"><span class="tag tag-medium">This month</span> Cursor IDE + Copilot</div><div class="dep-body">Install Cursor IDE and enable GitHub Copilot across all repos. Immediate productivity gain for Prasanna and any additional developers. Owner: Bryn / Mikhil.</div></div>
+      <div class="dep-row"><div class="dep-label"><span class="tag tag-medium">Soon</span> API Documentation</div><div class="dep-body">Audit and document all existing API endpoints with OpenAPI specs. AI tools reason about documented APIs — undocumented endpoints are invisible to them. Owner: Prasanna.</div></div>
+      <div class="dep-row"><div class="dep-label"><span class="tag tag-medium">Soon</span> Prisma ORM</div><div class="dep-body">Introduce Prisma on top of MySQL 8.0. Type-safe database access significantly improves AI code generation accuracy and reduces runtime errors. Owner: Prasanna.</div></div>
+    </div>
+
+    <div style="margin-top: 28px;">
+      <div style="font-size: 13px; font-weight: 500; margin-bottom: 12px; color: var(--text-sec);">Platform AI features to build — in development priority order</div>
+      <div class="card">
+        <div class="card-title" style="margin-bottom: 8px;">1. Gate completeness checking engine</div>
+        <div class="card-body">Rules-based validation for all 4 gates. The checklist items are defined — this is a data validation problem, not an AI problem. Build this first, as the foundation for everything else. AI handles edge cases where completeness is ambiguous. Target: Gate 1 and Gate 2 checklists in M1–3.</div>
+      </div>
+      <div class="card">
+        <div class="card-title" style="margin-bottom: 8px;">2. Notification and escalation engine</div>
+        <div class="card-body">All timing rules, SLA countdowns, and escalation paths in the operating model have defined triggers and recipients. This is a configurable notification system with rules, not a bespoke build. Gate 1 SLA, Gate 2 evidence prompts, AR reminders, certification expiry alerts — all driven by the same engine. Target: M2–4.</div>
+      </div>
+      <div class="card">
+        <div class="card-title" style="margin-bottom: 8px;">3. Mobile interface for field crews</div>
+        <div class="card-body">Senior Supervisors need to submit daily photos, timesheets, and variation flags from site. A lightweight mobile interface (React Progressive Web App on the existing stack) with structured photo upload, daily timesheet, and the variation flag form. The data feeds Gate 2 completeness scoring. Target: M3–6.</div>
+      </div>
+      <div class="card">
+        <div class="card-title" style="margin-bottom: 8px;">4. Document generation layer</div>
+        <div class="card-body">SoW first-draft generation, Field Handover briefing pre-population, Gate 3 pack assembly. All use AI to transform structured job data into compliant document formats. Build each when the upstream data is stable and correct. Target: M4–8 depending on data readiness.</div>
+      </div>
+      <div class="card">
+        <div class="card-title" style="margin-bottom: 8px;">5. Reporting and dashboard layer</div>
+        <div class="card-body">GM gate health dashboard, MD pipeline dashboard, Finance AR aging view. All derived from data that already exists in the system — this is a presentation and aggregation problem. Build once the underlying data is clean and consistent. Target: M6–12.</div>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- ROADMAP -->
+  <div class="section" id="roadmap">
+    <div class="section-header">
+      <div class="section-dot" style="background: var(--text);"></div>
+      <div>
+        <div class="section-title">Implementation Roadmap</div>
+        <div class="section-desc">Four phases. Each builds on the stability of the previous. AI is introduced only once the underlying process is consistent. Automating a broken process makes it break faster.</div>
+      </div>
+    </div>
+
+    <div class="phases">
+      <div class="phase" style="background: var(--bg-sec);">
+        <div class="phase-num">Phase 1</div>
+        <div class="phase-title">Foundation</div>
+        <div class="phase-timing">Month 1–3</div>
+        <ul class="phase-items">
+          <li>Gates running consistently across all states</li>
+          <li>Finance Administrator appointed and onboarded</li>
+          <li>Xero audit and P&L backdated to Jul 2025</li>
+          <li>Gate 2 48-hour rule enforced from day one</li>
+          <li>AR aging reviewed weekly — first collection process</li>
+          <li>13-week cashflow initiated</li>
+          <li>AWS DB backups configured</li>
+          <li>Node 18 → 22 upgrade complete</li>
+          <li>Jest testing framework introduced</li>
+          <li>Gate 1 completeness check (rules-based) built</li>
+        </ul>
+      </div>
+      <div class="phase" style="background: var(--teal-50);">
+        <div class="phase-num">Phase 2</div>
+        <div class="phase-title">Gate Enforcement</div>
+        <div class="phase-timing">Month 3–6</div>
+        <ul class="phase-items">
+          <li>Gate 1 pre-submission check live in Commercial</li>
+          <li>Gate 2 daily evidence prompting active</li>
+          <li>Variation flag process digitised</li>
+          <li>Gate 3 data aggregation from Xero (assisted)</li>
+          <li>AR automated reminders configured</li>
+          <li>Cursor IDE + Copilot deployed</li>
+          <li>OpenAPI docs complete</li>
+          <li>Mobile field interface (MVP)</li>
+          <li>Notification engine live</li>
+          <li>Tier auto-classification in Gate 1</li>
+        </ul>
+      </div>
+      <div class="phase" style="background: var(--blue-50);">
+        <div class="phase-num">Phase 3</div>
+        <div class="phase-title">Intelligence Layer</div>
+        <div class="phase-timing">Month 6–12</div>
+        <ul class="phase-items">
+          <li>Gate 3 pack AI-assisted assembly</li>
+          <li>Invoice generation automated on Gate 2</li>
+          <li>CRM intelligence — renewals, dormant accounts</li>
+          <li>Quote generation assist for Sales</li>
+          <li>SoW generation and completeness checking</li>
+          <li>GM gate health dashboard live</li>
+          <li>MD pipeline dashboard live</li>
+          <li>Prisma ORM introduced</li>
+          <li>Payroll → timesheet integration</li>
+          <li>SWMS review assist for WHS Manager</li>
+        </ul>
+      </div>
+      <div class="phase" style="background: var(--purple-50);">
+        <div class="phase-num">Phase 4</div>
+        <div class="phase-title">Scale</div>
+        <div class="phase-timing">Month 12–24</div>
+        <ul class="phase-items">
+          <li>Cashflow forecasting CRM-connected</li>
+          <li>Gate 3 largely automated — Finance reviews exceptions</li>
+          <li>Management reporting dashboards live</li>
+          <li>MD prospect intelligence briefings</li>
+          <li>Predictive job costing</li>
+          <li>Client health scoring</li>
+          <li>New state onboarding via system replication</li>
+          <li>3-way forecast fully integrated</li>
+          <li>AR chasing fully automated with escalation</li>
+          <li>Board-quality intelligence from live data</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="callout" style="margin-top: 20px;">
+      <strong>The sequence matters:</strong> Phase 1 makes the process consistent. Phase 2 makes AI enforcement meaningful. Phase 3 builds intelligence on top of clean data. Phase 4 scales without chaos. Skipping phases doesn't accelerate — it produces unreliable outputs from unreliable inputs.
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- FUTURE STATE -->
+  <div class="section" id="future">
+    <div class="section-header">
+      <div class="section-dot" style="background: var(--purple-600);"></div>
+      <div>
+        <div class="section-title">Future State Possibilities</div>
+        <div class="section-desc">What becomes possible once the foundations are in place and the data is clean, consistent, and flowing. These are 12–24 month capabilities, not day-one promises.</div>
+      </div>
+    </div>
+
+    <div class="future-card">
+      <div class="future-title">Predictive cashflow from live CRM pipeline</div>
+      <div class="future-body">Every Closed-Won deal in the CRM automatically appears in the 13-week cashflow forecast based on job value, billing structure (milestones or completion), and client payment history. The forecast updates in real time as deals close and jobs progress. Finance reviews anomalies; the system maintains the baseline. Shortfall predictions arrive 3 weeks before the problem, not 3 days.</div>
+    </div>
+
+    <div class="future-card">
+      <div class="future-title">AI-generated Gate 3 Performance Packs</div>
+      <div class="future-body">The Finance Administrator's role evolves: the Gate 3 pack is assembled from live Xero and job system data, exceptions are flagged with suggested owners, and the GM reviews and approves rather than assembles. The pack arrives within 2 business days of month end — not 3–5 — because the data is live, not manually compiled. The SLT meeting becomes a genuine decision forum, every month, without exception.</div>
+    </div>
+
+    <div class="future-card">
+      <div class="future-title">Smart Scope of Works generation</div>
+      <div class="future-body">Sales input the job parameters (service category, site, client, key requirements, duration) and AI generates a first-draft SoW that is specific, complete, and consistent with prior similar jobs. The document includes inclusions, exclusions, assumptions, variation rules, and billing triggers — all the items most commonly missing from manually authored scopes. The Sales Manager edits rather than authors. Errors that currently compound through to client disputes are caught before Gate 1.</div>
+    </div>
+
+    <div class="future-card">
+      <div class="future-title">Predictive job costing from historical data</div>
+      <div class="future-body">As job completion data accumulates — quoted margin vs actual margin, labour hours, subcontractor costs, variation rates by job type — AI builds a costing model that flags when a new quote is likely to underperform based on similar historical jobs. This is not a replacement for human judgement; it's an input that prevents the same costing errors from recurring across the portfolio.</div>
+    </div>
+
+    <div class="future-card">
+      <div class="future-title">Client health scoring</div>
+      <div class="future-body">An aggregate score per client account based on payment behaviour (DSO vs terms), scope dispute frequency, variation approval speed, communication responsiveness, and relationship tenure. High-health clients are prioritised for portfolio growth conversations. Declining-health clients are flagged to the Head of Commercial before they become a churn risk or a cashflow problem. The MD uses this for Tier 1 relationship strategy.</div>
+    </div>
+
+    <div class="future-card">
+      <div class="future-title">New state onboarding via system replication, not rebuilding</div>
+      <div class="future-body">At 24 months, FAMASO's operating model should be scalable — adding Queensland or Western Australia applies the system, not rebuilds it. AI-enforced gates, digital variation flags, automated AR, and live reporting dashboards mean a new State Ops Manager and State Sales Manager step into a functioning system on day one. The 4-month foundation phase for a new state becomes weeks when the platform carries the operating model.</div>
+    </div>
+
+    <div class="future-card">
+      <div class="future-title">Autonomous SWMS drafting for WHS Manager review</div>
+      <div class="future-body">For standard job types on known sites, AI generates a first-draft SWMS based on service category, site hazards from the job record, client-specific safety requirements, and regulatory controls for the relevant risk category. The WHS Manager reviews and edits — the role focuses on the judgement calls (novel hazards, complex sites, high-risk activities) rather than the administrative assembly of standard documents. Investigation reports are drafted from structured field inputs; the WHS Manager signs and owns the narrative.</div>
+    </div>
+
+    <div class="future-card">
+      <div class="future-title">Margin intelligence by job type, state, and supervisor</div>
+      <div class="future-body">Quoted gross margin vs actual gross margin, tracked by service line, state, client tier, and Senior Supervisor. Over time, patterns emerge: certain job types consistently underperform on margin; certain sites have higher variation rates; certain crew compositions deliver more consistently. This intelligence informs quoting strategy, resource allocation, and professional development conversations — without anyone needing to build a manual analysis.</div>
+    </div>
+
+    <div class="future-card">
+      <div class="future-title">Board-quality strategic intelligence from live data</div>
+      <div class="future-body">At 24 months and approaching $15M, the Gate 3 pack evolves from a monthly spreadsheet to a live dashboard that the MD and GM can access on demand — with the monthly SLT pack generated automatically as a point-in-time snapshot. Decisions are made from trusted, timely, granular data. The business can pursue $20–25M because the intelligence layer scales with revenue without proportional headcount growth in Finance or Operations administration.</div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div style="margin-top: 60px; padding-top: 28px; border-top: 0.5px solid var(--border-light); display: flex; justify-content: space-between; align-items: flex-end; flex-wrap: gap;">
+    <div>
+      <div style="font-size: 13px; font-weight: 500; margin-bottom: 4px;">FAMASO — AI Integration Strategy 2026</div>
+      <div style="font-size: 12px; color: var(--text-ter);">Confidential · For internal use · Bryn Jones, GM · Mikhil Kotak, MD</div>
+    </div>
+    <div style="font-size: 11px; color: var(--text-ter);">April 2026</div>
+  </div>
+
+</div>
+
+<script>
+  const sections = document.querySelectorAll('.section[id]');
+  const navLinks = document.querySelectorAll('.nav a');
+  
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        navLinks.forEach(a => a.classList.remove('active'));
+        const active = document.querySelector(`.nav a[href="#${entry.target.id}"]`);
+        if (active) {
+          active.classList.add('active');
+          active.scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        }
+      }
+    });
+  }, { threshold: 0.2 });
+
+  sections.forEach(s => observer.observe(s));
+</script>
+
+</body>
+</html>
