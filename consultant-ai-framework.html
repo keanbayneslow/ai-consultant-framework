@@ -1,0 +1,1201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI Consultant Framework — Discovery + LLM Build</title>
+<style>
+:root {
+  --text: #1a1a18; --text-s: #5a5955; --text-t: #999790;
+  --bg: #ffffff; --bg-s: #f5f4f0; --bg-t: #eeecea;
+  --border: rgba(0,0,0,0.1); --border-s: rgba(0,0,0,0.06);
+  --teal: #0F6E56; --teal-bg: #E1F5EE; --teal-text: #085041;
+  --blue: #185FA5; --blue-bg: #E6F1FB; --blue-text: #0C447C;
+  --amber: #854F0B; --amber-bg: #FAEEDA; --amber-text: #633806;
+  --purple: #534AB7; --purple-bg: #EEEDFE; --purple-text: #3C3489;
+  --coral: #993C1D; --coral-bg: #FAECE7; --coral-text: #712B13;
+  --green: #3B6D11; --green-bg: #EAF3DE; --green-text: #27500A;
+  --red-bg: #FCEBEB; --red-text: #501313; --red-border: #E24B4A;
+  --r: 8px; --rl: 14px;
+  --font: -apple-system,'Helvetica Neue',Arial,sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:var(--font);color:var(--text);background:var(--bg-t);font-size:15px;line-height:1.65;}
+
+/* ── TOP NAV ── */
+.topnav{background:var(--text);display:flex;align-items:stretch;padding:0 40px;position:sticky;top:0;z-index:200;}
+.topnav-brand{color:#fff;font-size:13px;font-weight:500;opacity:0.5;display:flex;align-items:center;padding-right:24px;border-right:0.5px solid rgba(255,255,255,0.15);margin-right:8px;}
+.topnav-section{display:flex;align-items:stretch;}
+.topnav-btn{color:rgba(255,255,255,0.5);font-size:13px;font-weight:500;padding:14px 16px;cursor:pointer;border-bottom:2px solid transparent;transition:all 0.15s;white-space:nowrap;background:none;border-top:none;border-left:none;border-right:none;}
+.topnav-btn:hover{color:#fff;}
+.topnav-btn.on{color:#fff;border-bottom-color:#fff;}
+
+/* ── SUBNAV ── */
+.subnav{background:var(--bg);border-bottom:0.5px solid var(--border);padding:0 40px;display:flex;gap:0;overflow-x:auto;position:sticky;top:48px;z-index:190;}
+.subnav a{padding:12px 16px;font-size:12px;font-weight:500;color:var(--text-s);text-decoration:none;white-space:nowrap;border-bottom:2px solid transparent;transition:all 0.15s;}
+.subnav a:hover{color:var(--text);}
+.subnav a.on{color:var(--text);border-bottom-color:var(--text);}
+
+/* ── PAGE SHELL ── */
+.main-page{display:none;}.main-page.on{display:block;}
+.hero{padding:52px 40px 44px;}
+.hero-label{font-size:11px;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;opacity:0.5;margin-bottom:10px;}
+.hero h1{font-size:32px;font-weight:500;letter-spacing:-0.4px;line-height:1.2;margin-bottom:10px;}
+.hero-sub{font-size:15px;color:var(--text-s);max-width:560px;line-height:1.6;}
+.page-body{max-width:960px;margin:0 auto;padding:0 40px 80px;}
+.sec{padding:44px 0 0;}
+.sec-hd{margin-bottom:24px;}
+.sec-title{font-size:20px;font-weight:500;letter-spacing:-0.3px;margin-bottom:5px;}
+.sec-sub{font-size:13px;color:var(--text-s);max-width:600px;line-height:1.55;}
+.divider{border:none;border-top:0.5px solid var(--border-s);margin:44px 0 0;}
+
+/* ── CARDS ── */
+.card{background:var(--bg);border:0.5px solid var(--border-s);border-radius:var(--rl);padding:20px 22px;}
+.card+.card{margin-top:10px;}
+.card-hd{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:12px;}
+.card-title{font-size:14px;font-weight:500;line-height:1.4;}
+.card-body{font-size:13px;color:var(--text-s);line-height:1.65;}
+.card-body p+p{margin-top:7px;}
+.card-foot{margin-top:12px;display:flex;gap:6px;flex-wrap:wrap;}
+
+/* ── GRIDS ── */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+
+/* ── TAGS ── */
+.tag{display:inline-flex;padding:3px 10px;border-radius:100px;font-size:11px;font-weight:500;}
+.t-teal{background:var(--teal-bg);color:var(--teal-text);}
+.t-blue{background:var(--blue-bg);color:var(--blue-text);}
+.t-amber{background:var(--amber-bg);color:var(--amber-text);}
+.t-purple{background:var(--purple-bg);color:var(--purple-text);}
+.t-coral{background:var(--coral-bg);color:var(--coral-text);}
+.t-green{background:var(--green-bg);color:var(--green-text);}
+.t-red{background:var(--red-bg);color:var(--red-text);}
+.t-gray{background:var(--bg-s);color:var(--text-s);}
+
+/* ── QUESTION BLOCKS ── */
+.qblock{margin-bottom:12px;}
+.qblock-who{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-t);margin-bottom:8px;}
+.q{font-size:13px;color:var(--text-s);padding:6px 0;border-bottom:0.5px solid var(--border-s);line-height:1.5;}
+.q:last-child{border-bottom:none;}
+.q::before{content:"— ";color:var(--text-t);}
+
+/* ── DOC LIST ── */
+.doclist .di{font-size:12px;color:var(--text-s);padding:5px 0;border-bottom:0.5px solid var(--border-s);line-height:1.5;}
+.doclist .di:last-child{border-bottom:none;}
+.doclist .di::before{content:"↓  ";color:var(--text-t);font-size:10px;}
+
+/* ── LISTEN BOX ── */
+.listen{background:var(--bg-s);border-radius:var(--r);padding:12px 14px;margin-top:10px;}
+.listen-hd{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.09em;color:var(--text-t);margin-bottom:8px;}
+.li{font-size:12px;color:var(--text-s);padding:3px 0;line-height:1.5;}
+.li::before{content:"· ";color:var(--text-t);}
+
+/* ── RED FLAG ── */
+.rflag{border-left:3px solid var(--red-border);background:var(--red-bg);border-radius:0 var(--r) var(--r) 0;padding:12px 16px;margin-bottom:10px;}
+.rflag-t{font-size:13px;font-weight:500;color:var(--red-text);margin-bottom:4px;}
+.rflag-b{font-size:12px;color:var(--text-s);line-height:1.55;}
+
+/* ── CALLOUT ── */
+.callout{border-left:3px solid var(--text);background:var(--bg-s);border-radius:0 var(--r) var(--r) 0;padding:14px 18px;margin:14px 0;font-size:13px;color:var(--text-s);line-height:1.6;}
+.callout strong{color:var(--text);font-weight:500;}
+
+/* ── LLM FRAMEWORK SPECIFIC ── */
+.layer{background:var(--bg);border:0.5px solid var(--border-s);border-radius:var(--rl);overflow:hidden;margin-bottom:12px;}
+.layer-hd{padding:16px 20px;border-bottom:0.5px solid var(--border-s);display:flex;align-items:center;gap:14px;}
+.layer-num{width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:600;flex-shrink:0;}
+.layer-info .layer-title{font-size:14px;font-weight:500;}
+.layer-info .layer-sub{font-size:12px;color:var(--text-s);margin-top:2px;}
+.layer-body{padding:16px 20px;}
+.layer-cols{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.layer-col-hd{font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-t);margin-bottom:10px;}
+.step{padding:8px 10px;background:var(--bg-s);border-radius:var(--r);margin-bottom:7px;font-size:12px;color:var(--text-s);line-height:1.5;}
+.step strong{display:block;font-weight:500;color:var(--text);font-size:12px;margin-bottom:2px;}
+
+/* ── DECISION MATRIX ── */
+.matrix{width:100%;border-collapse:collapse;font-size:12px;margin:14px 0;}
+.matrix th{background:var(--bg-s);padding:8px 12px;text-align:left;font-weight:500;font-size:11px;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-s);border-bottom:0.5px solid var(--border);}
+.matrix td{padding:9px 12px;border-bottom:0.5px solid var(--border-s);vertical-align:top;color:var(--text-s);}
+.matrix tr:last-child td{border-bottom:none;}
+.matrix td:first-child{font-weight:500;color:var(--text);}
+
+/* ── METRIC CARDS ── */
+.metrics{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:16px 0;}
+.metric{background:var(--bg-s);border-radius:var(--r);padding:14px 16px;}
+.metric-l{font-size:11px;color:var(--text-t);margin-bottom:5px;font-weight:500;}
+.metric-v{font-size:18px;font-weight:500;}
+.metric-s{font-size:11px;color:var(--text-t);margin-top:3px;}
+
+/* ── PHASE STRIP ── */
+.phases{display:grid;grid-template-columns:repeat(4,1fr);border:0.5px solid var(--border);border-radius:var(--rl);overflow:hidden;margin:16px 0;}
+.phase{padding:18px 16px;border-right:0.5px solid var(--border);}
+.phase:last-child{border-right:none;}
+.phase-n{font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.1em;color:var(--text-t);margin-bottom:5px;}
+.phase-t{font-size:13px;font-weight:500;margin-bottom:3px;}
+.phase-tm{font-size:11px;color:var(--text-t);margin-bottom:10px;}
+.phase ul{list-style:none;font-size:11px;color:var(--text-s);line-height:1.9;}
+.phase ul li::before{content:"— ";color:var(--text-t);}
+
+/* ── SCORE WIDGET ── */
+.score-wrap{background:var(--bg);border:0.5px solid var(--border-s);border-radius:var(--rl);padding:22px 24px;margin:16px 0;}
+.score-title{font-size:14px;font-weight:500;margin-bottom:4px;}
+.score-sub{font-size:12px;color:var(--text-s);margin-bottom:18px;}
+.score-row{display:flex;align-items:center;gap:12px;margin-bottom:10px;}
+.score-label{font-size:13px;min-width:200px;}
+.score-slider{flex:1;}
+.score-val{font-size:13px;font-weight:500;min-width:28px;text-align:right;}
+.score-result{margin-top:16px;padding:14px 16px;border-radius:var(--r);font-size:13px;line-height:1.6;}
+
+/* ── PROMPT TEMPLATE ── */
+.prompt-block{background:var(--bg-t);border:0.5px solid var(--border);border-radius:var(--r);padding:14px 16px;font-family:monospace;font-size:12px;line-height:1.7;color:var(--text-s);margin:12px 0;white-space:pre-wrap;}
+.prompt-block .ph{color:var(--blue);font-weight:500;}
+.prompt-block .cm{color:var(--text-t);font-style:italic;}
+
+/* ── RESPONSIVE ── */
+@media(max-width:680px){
+  .page-body,.hero{padding-left:20px;padding-right:20px;}
+  .topnav{padding:0 16px;}
+  .subnav{padding:0 16px;}
+  .g2,.g3,.metrics,.phases,.layer-cols{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- TOP NAV: two main sections -->
+<nav class="topnav">
+  <div class="topnav-brand">AI Consultant Kit</div>
+  <div class="topnav-section">
+    <button class="topnav-btn on" onclick="showMain('discovery',this)">Generic discovery</button>
+    <button class="topnav-btn" onclick="showMain('llm',this)">LLM build framework</button>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════════════════════
+     SECTION 1: GENERIC DISCOVERY
+═══════════════════════════════════════════════ -->
+<div id="main-discovery" class="main-page on">
+
+  <nav class="subnav" id="subnav-discovery">
+    <a href="#d-overview" class="on">Overview</a>
+    <a href="#d-business">Business fundamentals</a>
+    <a href="#d-process">Process maturity</a>
+    <a href="#d-data">Data & systems</a>
+    <a href="#d-people">People & change</a>
+    <a href="#d-strategic">Strategic intent</a>
+    <a href="#d-investment">Investment</a>
+    <a href="#d-gonofo">Go / no-go</a>
+    <a href="#d-readiness">AI readiness score</a>
+  </nav>
+
+  <div class="hero" style="background:var(--bg);">
+    <div class="hero-label">Part 1 of 2</div>
+    <h1>Generic AI discovery framework</h1>
+    <div class="hero-sub">Agnostic questions, document requests, and red flags you can use with any new client — regardless of industry, size, or maturity. Adapt the framing; the underlying questions apply universally.</div>
+  </div>
+
+  <div class="page-body">
+
+    <!-- OVERVIEW -->
+    <div class="sec" id="d-overview">
+      <div class="sec-hd">
+        <div class="sec-title">How to use this framework</div>
+        <div class="sec-sub">Seven discovery tracks run in parallel across two or three sessions. Each track has a different primary owner — some questions go to the MD/CEO, others to operations heads, others to the people who do the work day-to-day. Never ask them all in one room.</div>
+      </div>
+
+      <div class="callout">
+        <strong>The golden rule of AI discovery:</strong> You are not discovering whether AI can help — it almost always can. You are discovering whether this business is ready to absorb it, in what sequence it will create the most value, and what has to be true before the first recommendation can land. Readiness precedes strategy.
+      </div>
+
+      <div class="g3" style="margin-top:16px;">
+        <div class="card">
+          <div class="card-title" style="margin-bottom:7px;">Session 1 — Leadership pair</div>
+          <div class="card-body">Business fundamentals, strategic intent, go/no-go parameters, investment envelope. Run MD and GM separately first if the business has both roles. Combine for alignment check.</div>
+        </div>
+        <div class="card">
+          <div class="card-title" style="margin-bottom:7px;">Session 2 — Operational heads</div>
+          <div class="card-body">Process maturity, data and systems reality, people and change readiness. The people who run the processes know whether the documentation matches practice. Go to them, not the CEO, for current state truth.</div>
+        </div>
+        <div class="card">
+          <div class="card-title" style="margin-bottom:7px;">Session 3 — Ground level</div>
+          <div class="card-body">Shadow real work. One briefing, one job handoff, one client communication. Ten minutes of observation is worth three interviews. What you see in practice is the baseline your AI will operate in — not what's written down.</div>
+        </div>
+      </div>
+
+      <div class="metrics" style="margin-top:20px;">
+        <div class="metric"><div class="metric-l">Tracks</div><div class="metric-v">7</div><div class="metric-s">Run in parallel</div></div>
+        <div class="metric"><div class="metric-l">Sessions minimum</div><div class="metric-v">3</div><div class="metric-s">Before scoping</div></div>
+        <div class="metric"><div class="metric-l">Documents to request</div><div class="metric-v">12+</div><div class="metric-s">Real examples only</div></div>
+        <div class="metric"><div class="metric-l">Observation hours</div><div class="metric-v">2–4</div><div class="metric-s">Shadow real work</div></div>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- BUSINESS FUNDAMENTALS -->
+    <div class="sec" id="d-business">
+      <div class="sec-hd">
+        <div class="sec-title">Track 1 — Business fundamentals</div>
+        <div class="sec-sub">Establish the operating context before asking anything about AI. You cannot assess readiness without understanding scale, structure, and the core commercial model.</div>
+      </div>
+
+      <div class="g2">
+        <div>
+          <div class="card">
+            <div class="card-hd"><div class="card-title">Structure & scale</div><span class="tag t-blue">CEO / MD</span></div>
+            <div class="qblock">
+              <div class="q">What does the business do — describe it as if I knew nothing about your industry.</div>
+              <div class="q">How is the business structured — silos, departments, geographic units?</div>
+              <div class="q">How many people, across what locations, in what roles?</div>
+              <div class="q">What is current annual revenue, and what is the plan for 12 and 24 months?</div>
+              <div class="q">What proportion of revenue is recurring vs project-based vs one-off?</div>
+              <div class="q">Who are your top five clients by revenue — and what share of total revenue do they represent?</div>
+              <div class="q">Are there any clients whose loss would materially threaten the business?</div>
+            </div>
+          </div>
+          <div class="card" style="margin-top:10px;">
+            <div class="card-hd"><div class="card-title">Commercial model</div><span class="tag t-blue">CEO / MD</span></div>
+            <div class="qblock">
+              <div class="q">How does work come in — inbound enquiry, outbound sales, tenders, relationships?</div>
+              <div class="q">What is the average deal cycle from first contact to confirmed work order?</div>
+              <div class="q">How is revenue recognised — on completion, milestones, monthly retainer?</div>
+              <div class="q">What is your gross margin target, and what is the actual current margin?</div>
+              <div class="q">What is the primary constraint on growth — capacity, capital, sales, or something else?</div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="card">
+            <div class="card-hd"><div class="card-title">Documents to request</div></div>
+            <div class="doclist">
+              <div class="di">Org chart — current, not aspirational</div>
+              <div class="di">Revenue by segment — last 12 months actuals</div>
+              <div class="di">Top 10 clients by revenue with % of total</div>
+              <div class="di">Current gross margin by service or product line</div>
+              <div class="di">Company overview or pitch deck (if one exists)</div>
+              <div class="di">Any existing strategic plan or growth document</div>
+            </div>
+          </div>
+          <div class="listen" style="margin-top:10px;">
+            <div class="listen-hd">Listen for</div>
+            <div class="li">Revenue concentration in 1–2 clients — fragility that changes urgency</div>
+            <div class="li">Gross margin stated as target not actual — data may not exist</div>
+            <div class="li">Growth ambition without named constraint — "what stops you?" often reveals the real problem</div>
+            <div class="li">Recurring revenue below 30% — cashflow will be lumpy; AI forecasting harder</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- PROCESS MATURITY -->
+    <div class="sec" id="d-process">
+      <div class="sec-hd">
+        <div class="sec-title">Track 2 — Process maturity</div>
+        <div class="sec-sub">The most important discovery track for AI readiness. AI enforces and accelerates processes — it cannot create them from scratch. You need to know whether processes are documented, practised, and consistent.</div>
+      </div>
+
+      <div class="g2">
+        <div>
+          <div class="card">
+            <div class="card-hd"><div class="card-title">Process documentation reality</div><span class="tag t-amber">Ops heads</span></div>
+            <div class="qblock">
+              <div class="q">Do you have documented processes for your core workflows — where do they live?</div>
+              <div class="q">When were they last updated? Are they actively maintained or written once and forgotten?</div>
+              <div class="q">If I asked three different people how a job gets handed from sales to delivery, would I get the same answer?</div>
+              <div class="q">Where do jobs most commonly get stuck or slow down?</div>
+              <div class="q">What are the top three things that cause rework, errors, or delays right now?</div>
+              <div class="q">Are there informal workarounds that people use instead of the documented process?</div>
+            </div>
+          </div>
+          <div class="card" style="margin-top:10px;">
+            <div class="card-hd"><div class="card-title">Handoffs and accountability</div><span class="tag t-amber">Ops heads</span></div>
+            <div class="qblock">
+              <div class="q">When work moves from one team or person to another, how does that happen — email, call, system?</div>
+              <div class="q">Who is accountable when something falls through the gap between two teams?</div>
+              <div class="q">How do you know a handoff was completed? Is there any record?</div>
+              <div class="q">Where are the most expensive handoff failures — what do they cost when they go wrong?</div>
+              <div class="q">How is scope change or variation from the original agreement handled?</div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="card">
+            <div class="card-hd"><div class="card-title">Documents to request</div></div>
+            <div class="doclist">
+              <div class="di">5 real examples of a core handoff document — accepted and rejected versions</div>
+              <div class="di">Any process maps, SOPs, or internal playbooks</div>
+              <div class="di">A sample client contract or service agreement</div>
+              <div class="di">A sample completed job record — from start to invoice</div>
+              <div class="di">Any current checklists used in the field or in office</div>
+            </div>
+          </div>
+          <div class="card" style="margin-top:10px;">
+            <div class="card-hd"><div class="card-title">Maturity scoring guide</div></div>
+            <div class="card-body">
+              <p><strong style="font-weight:500;">Level 1 — Informal:</strong> Work happens but isn't documented. Processes exist in people's heads. High key-person risk.</p>
+              <p><strong style="font-weight:500;">Level 2 — Documented:</strong> Processes written down but inconsistently followed. Docs may be outdated.</p>
+              <p><strong style="font-weight:500;">Level 3 — Practised:</strong> Processes followed consistently. Some measurement. Deviations noticed.</p>
+              <p><strong style="font-weight:500;">Level 4 — Measured:</strong> KPIs tracked against process. Issues visible before they escalate.</p>
+              <p><strong style="font-weight:500;">Level 5 — Optimised:</strong> Process data drives improvement. Ready for AI automation layer.</p>
+            </div>
+          </div>
+          <div class="listen" style="margin-top:10px;">
+            <div class="listen-hd">Listen for</div>
+            <div class="li">"We know what to do, people just don't always do it" — adoption problem, not AI problem</div>
+            <div class="li">Different answers from different people about the same process</div>
+            <div class="li">Handoffs that happen verbally — no paper trail means no AI leverage</div>
+            <div class="li">The real process described as an exception to the documented one</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- DATA & SYSTEMS -->
+    <div class="sec" id="d-data">
+      <div class="sec-hd">
+        <div class="sec-title">Track 3 — Data and systems</div>
+        <div class="sec-sub">AI runs on data. Before recommending any AI capability, you must understand where data lives, whether it's clean, whether it's connected, and whether the systems that hold it are stable enough to build on.</div>
+      </div>
+
+      <div class="g2">
+        <div>
+          <div class="card">
+            <div class="card-hd"><div class="card-title">Technology stack reality</div><span class="tag t-teal">Tech lead / GM</span></div>
+            <div class="qblock">
+              <div class="q">List every system the business relies on day-to-day — and what each one does.</div>
+              <div class="q">Which systems talk to each other, and which are silos?</div>
+              <div class="q">Where does the authoritative record of a job/project/client live?</div>
+              <div class="q">Is your CRM actively used — how many records, how current is the data?</div>
+              <div class="q">Is your accounting platform reconciled and current?</div>
+              <div class="q">Where do documents live — email, shared drive, a system?</div>
+              <div class="q">Do you have APIs or webhooks on your key systems, or are they closed?</div>
+            </div>
+          </div>
+          <div class="card" style="margin-top:10px;">
+            <div class="card-hd"><div class="card-title">Data quality</div><span class="tag t-teal">Tech lead / Finance</span></div>
+            <div class="qblock">
+              <div class="q">If I asked you for revenue by client for the last 12 months, how long would it take to produce?</div>
+              <div class="q">How complete are your job records — do they capture costs, timesheets, and outcomes consistently?</div>
+              <div class="q">How much of your data entry is manual vs automated?</div>
+              <div class="q">Are there known data quality problems — duplicates, gaps, inconsistent coding?</div>
+              <div class="q">Have you ever tried to do analysis on your historical data — what happened?</div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="card">
+            <div class="card-hd"><div class="card-title">Documents / access to request</div></div>
+            <div class="doclist">
+              <div class="di">Full system/tool inventory with monthly costs</div>
+              <div class="di">CRM — export of pipeline, contact count, last activity dates</div>
+              <div class="di">Accounting platform — current reconciliation status</div>
+              <div class="di">Any existing API or integration documentation</div>
+              <div class="di">A walkthrough of the primary operational system (30 min screen share)</div>
+              <div class="di">Sample data export from the job management system</div>
+            </div>
+          </div>
+          <div class="listen" style="margin-top:10px;">
+            <div class="listen-hd">Listen for</div>
+            <div class="li">"We use spreadsheets for that" — data is not structured or queryable</div>
+            <div class="li">Multiple systems with no single source of truth — AI integration cost multiplies</div>
+            <div class="li">Accounting platform not reconciled — financial AI is premature</div>
+            <div class="li">CRM described as "we have one but..." — means it's not actively maintained</div>
+            <div class="li">Data that lives in people's inboxes — structurally inaccessible to AI</div>
+            <div class="li">"We've never been able to pull that report" — the data problem is the real problem</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- PEOPLE & CHANGE -->
+    <div class="sec" id="d-people">
+      <div class="sec-hd">
+        <div class="sec-title">Track 4 — People and change readiness</div>
+        <div class="sec-sub">AI implementations fail on adoption more often than on technology. Map the humans before you design the system. Who will champion it, who will resist it, and what has happened when the business tried to change things before.</div>
+      </div>
+
+      <div class="g2">
+        <div>
+          <div class="card">
+            <div class="card-hd"><div class="card-title">Champions and blockers</div><span class="tag t-purple">Leadership + Ops</span></div>
+            <div class="qblock">
+              <div class="q">Who in this business is most excited about using technology to work differently?</div>
+              <div class="q">Who is most likely to say "we don't need this" or "that's not how we do things"?</div>
+              <div class="q">Are there any people the business genuinely cannot function without — key-person risks?</div>
+              <div class="q">How does the leadership team make decisions about tools and process changes?</div>
+              <div class="q">Who has credibility with the field or frontline team — who do they actually listen to?</div>
+            </div>
+          </div>
+          <div class="card" style="margin-top:10px;">
+            <div class="card-hd"><div class="card-title">Change history</div><span class="tag t-purple">GM / Ops heads</span></div>
+            <div class="qblock">
+              <div class="q">Has the business introduced a new system or process in the last two years — what happened?</div>
+              <div class="q">What made it stick or not stick?</div>
+              <div class="q">What does "training" look like here — formal sessions, on-the-job, YouTube?</div>
+              <div class="q">Is there a pattern to what gets adopted vs what gets ignored?</div>
+              <div class="q">What would make frontline staff trust a new tool enough to use it?</div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="card">
+            <div class="card-hd"><div class="card-title">Field / frontline reality</div><span class="tag t-purple">Field supervisors</span></div>
+            <div class="qblock">
+              <div class="q">What devices does your team have on site — phones, tablets, laptops, nothing?</div>
+              <div class="q">Do they use any apps in their personal life that are similar to what we'd need?</div>
+              <div class="q">What's the mobile connectivity like on the sites you typically work on?</div>
+              <div class="q">What's the most annoying administrative thing you have to do on a job?</div>
+              <div class="q">If an app could do one thing to make your job easier, what would it be?</div>
+            </div>
+          </div>
+          <div class="listen" style="margin-top:10px;">
+            <div class="listen-hd">Listen for</div>
+            <div class="li">Prior failed rollouts with no post-mortem — the same failure will recur</div>
+            <div class="li">"The team isn't tech-savvy" said by leadership, not by the team</div>
+            <div class="li">No named champion at frontline level — AI needs a champion where the work happens</div>
+            <div class="li">High turnover in key roles — training investment is lost repeatedly</div>
+            <div class="li">A specific person whose buy-in is structurally essential — identify and engage early</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- STRATEGIC INTENT -->
+    <div class="sec" id="d-strategic">
+      <div class="sec-hd">
+        <div class="sec-title">Track 5 — Strategic intent and problem definition</div>
+        <div class="sec-sub">What triggered this conversation? What does success look like, and what would failure look like? The answers shape everything — including whether you take the engagement at all.</div>
+      </div>
+
+      <div class="g2">
+        <div>
+          <div class="card">
+            <div class="card-hd"><div class="card-title">Problem definition</div><span class="tag t-coral">MD / CEO</span></div>
+            <div class="qblock">
+              <div class="q">What triggered this conversation — why AI, and why now?</div>
+              <div class="q">Is there a specific problem this has to solve, or is this exploratory?</div>
+              <div class="q">If you could fix one thing in the next 90 days, what would it be?</div>
+              <div class="q">What does success look like at 12 months — what would be specifically different?</div>
+              <div class="q">What would make you say this engagement was a waste of money?</div>
+              <div class="q">Is there external pressure driving this — a client, a competitor, an investor?</div>
+            </div>
+          </div>
+          <div class="card" style="margin-top:10px;">
+            <div class="card-hd"><div class="card-title">Boundaries and non-negotiables</div><span class="tag t-coral">MD + GM</span></div>
+            <div class="qblock">
+              <div class="q">What is not on the table — what won't change regardless of what you recommend?</div>
+              <div class="q">Are there parts of the business or operating model that are off-limits?</div>
+              <div class="q">Are there regulatory, client, or contractual constraints we need to know about?</div>
+              <div class="q">Are there any previous commitments made to staff about roles or tools?</div>
+              <div class="q">Is the goal to enhance the current model or are you open to challenging it?</div>
+              <div class="q">Are you comfortable with recommendations that take 12–18 months to pay off?</div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="card">
+            <div class="card-hd"><div class="card-title">Alignment check questions</div><span class="tag t-coral">MD + GM joint</span></div>
+            <div class="qblock">
+              <div class="q">Do you both define "AI integration" the same way — what does it mean to each of you?</div>
+              <div class="q">If I recommend something that requires significant process change before any AI, are you prepared for that?</div>
+              <div class="q">Who makes the final decision on this engagement — and are they in the room?</div>
+              <div class="q">What decisions are you prepared to make on the back of this engagement?</div>
+              <div class="q">Is there anyone else whose buy-in is needed before you can move forward?</div>
+            </div>
+          </div>
+          <div class="listen" style="margin-top:10px;">
+            <div class="listen-hd">Listen for</div>
+            <div class="li">"We want AI" without a named problem — a solution looking for a problem</div>
+            <div class="li">MD and GM describing the primary problem differently — alignment gap</div>
+            <div class="li">Non-negotiables that constrain the best recommendation before you've made it</div>
+            <div class="li">External pressure disconnected from internal readiness — urgency without capacity</div>
+            <div class="li">"Just do whatever you think" — abdication. You need an engaged sponsor to succeed.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- INVESTMENT -->
+    <div class="sec" id="d-investment">
+      <div class="sec-hd">
+        <div class="sec-title">Track 6 — Investment parameters</div>
+        <div class="sec-sub">Establish the envelope before you design a solution. A recommendation that the business cannot fund is not a recommendation — it's a document. Know the number and the payback expectation early.</div>
+      </div>
+
+      <div class="g2">
+        <div>
+          <div class="card">
+            <div class="card-hd"><div class="card-title">Budget and decision authority</div><span class="tag t-green">MD / Finance</span></div>
+            <div class="qblock">
+              <div class="q">What is the investment envelope for this engagement — strategy, implementation, and tooling?</div>
+              <div class="q">Is there a payback period that matters — 6 months, 12 months, 24 months?</div>
+              <div class="q">Is the budget a hard cap or a starting point subject to business case?</div>
+              <div class="q">Who approves spend at this level — one person or a committee?</div>
+              <div class="q">Is the preference SaaS tools (lower upfront, ongoing cost) or build (higher upfront, owned asset)?</div>
+              <div class="q">Are there any active cashflow or covenant constraints on capital spend right now?</div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="card">
+            <div class="card-hd"><div class="card-title">ROI framing questions</div><span class="tag t-green">MD / GM</span></div>
+            <div class="qblock">
+              <div class="q">What would a 10-day reduction in your cash conversion cycle be worth annually?</div>
+              <div class="q">What does one senior person's time cost if freed from manual reporting each month?</div>
+              <div class="q">What is the cost of a lost client due to a delivery or billing error?</div>
+              <div class="q">What does a missed variation on an average job cost in unrecovered margin?</div>
+              <div class="q">What is the revenue impact of one additional Tier 1 client per year?</div>
+            </div>
+          </div>
+          <div class="listen" style="margin-top:10px;">
+            <div class="listen-hd">Listen for</div>
+            <div class="li">Budget that doesn't match the ambition described — scope accordingly</div>
+            <div class="li">No named payback horizon — means they haven't thought about ROI yet</div>
+            <div class="li">Decision by committee with no named sponsor — stalls are likely</div>
+            <div class="li">Cashflow pressure — a large upfront commitment may be structurally impossible</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- GO / NO-GO -->
+    <div class="sec" id="d-gonofo">
+      <div class="sec-hd">
+        <div class="sec-title">Track 7 — Go / no-go parameters</div>
+        <div class="sec-sub">These are the conditions that determine whether you proceed, scope differently, or recommend prerequisites before AI work begins. They are not client-specific — they apply to every engagement.</div>
+      </div>
+
+      <div class="card">
+        <div style="overflow-x:auto;">
+          <table class="matrix">
+            <thead>
+              <tr><th style="width:200px;">Condition</th><th>Green — proceed</th><th>Amber — prerequisite needed</th><th>Red — do not scope AI yet</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Process documentation</td><td>Core processes documented and practised consistently</td><td>Documented but inconsistently followed — embed before automating</td><td>Processes exist only in heads — document first</td></tr>
+              <tr><td>Data quality</td><td>Key data in structured systems, reasonably current</td><td>Data exists but has quality issues — clean-up phase needed</td><td>Data lives in spreadsheets, email, or nowhere — data foundation first</td></tr>
+              <tr><td>System connectivity</td><td>Primary systems have APIs or integrations available</td><td>Closed systems — manual export/import required, scoping changes</td><td>No systems, or systems that cannot connect — tool selection first</td></tr>
+              <tr><td>Finance function</td><td>Finance role filled, accounting platform current and reconciled</td><td>Finance role unfilled or platform behind — fill role before finance AI</td><td>No finance function — AI on an unmanned function produces nothing</td></tr>
+              <tr><td>Leadership alignment</td><td>MD and GM share a clear problem statement and success definition</td><td>Partial alignment — facilitated session needed before scoping</td><td>No shared problem — engagement will serve one and frustrate the other</td></tr>
+              <tr><td>Development capacity</td><td>Development team in place with realistic velocity</td><td>Single developer — SaaS-first strategy, platform features 12m+</td><td>No technical resource — third-party tools only, no custom build</td></tr>
+              <tr><td>Change sponsor</td><td>Named sponsor with credibility at the operational level</td><td>Sponsor at leadership level only — field adoption at risk</td><td>No sponsor — AI will be rolled out without anyone owning adoption</td></tr>
+              <tr><td>Investment clarity</td><td>Budget defined, decision authority clear, payback horizon agreed</td><td>Budget range given — needs refinement after scoping</td><td>No budget conversation — engagement may not be serious</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- AI READINESS SCORE -->
+    <div class="sec" id="d-readiness">
+      <div class="sec-hd">
+        <div class="sec-title">AI readiness scorecard</div>
+        <div class="sec-sub">Use after discovery sessions to assess overall readiness and communicate it back to the client. Score each dimension from 1 (not ready) to 5 (fully ready). The output guides sequencing — not just whether to proceed, but where to start.</div>
+      </div>
+
+      <div class="score-wrap">
+        <div class="score-title">Client readiness assessment</div>
+        <div class="score-sub">Adjust each slider after completing discovery. The overall score and recommendation update automatically.</div>
+
+        <div class="score-row"><label class="score-label">Process documentation & consistency</label><input class="score-slider" type="range" min="1" max="5" value="3" step="1" oninput="updateScore()"><span class="score-val" id="v0">3</span></div>
+        <div class="score-row"><label class="score-label">Data quality & structure</label><input class="score-slider" type="range" min="1" max="5" value="3" step="1" oninput="updateScore()"><span class="score-val" id="v1">3</span></div>
+        <div class="score-row"><label class="score-label">System connectivity & APIs</label><input class="score-slider" type="range" min="1" max="5" value="3" step="1" oninput="updateScore()"><span class="score-val" id="v2">3</span></div>
+        <div class="score-row"><label class="score-label">Finance function maturity</label><input class="score-slider" type="range" min="1" max="5" value="3" step="1" oninput="updateScore()"><span class="score-val" id="v3">3</span></div>
+        <div class="score-row"><label class="score-label">Leadership alignment & clarity</label><input class="score-slider" type="range" min="1" max="5" value="3" step="1" oninput="updateScore()"><span class="score-val" id="v4">3</span></div>
+        <div class="score-row"><label class="score-label">Technical / development capacity</label><input class="score-slider" type="range" min="1" max="5" value="3" step="1" oninput="updateScore()"><span class="score-val" id="v5">3</span></div>
+        <div class="score-row"><label class="score-label">Change readiness & adoption culture</label><input class="score-slider" type="range" min="1" max="5" value="3" step="1" oninput="updateScore()"><span class="score-val" id="v6">3</span></div>
+        <div class="score-row"><label class="score-label">Investment clarity & budget</label><input class="score-slider" type="range" min="1" max="5" value="3" step="1" oninput="updateScore()"><span class="score-val" id="v7">3</span></div>
+
+        <div id="score-result" class="score-result" style="background:var(--bg-s);">
+          <strong id="score-headline" style="font-weight:500;display:block;margin-bottom:5px;">Overall score: 24 / 40</strong>
+          <span id="score-desc" style="color:var(--text-s);">Partial readiness — a foundation phase is needed before AI can deliver reliably. Identify the lowest-scoring dimensions and sequence those as prerequisites.</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════
+     SECTION 2: LLM BUILD FRAMEWORK
+═══════════════════════════════════════════════ -->
+<div id="main-llm" class="main-page">
+
+  <nav class="subnav" id="subnav-llm">
+    <a href="#l-overview" class="on">Overview</a>
+    <a href="#l-knowledge">Knowledge architecture</a>
+    <a href="#l-usecases">Use case design</a>
+    <a href="#l-model">Model selection</a>
+    <a href="#l-interface">Interface design</a>
+    <a href="#l-governance">Governance</a>
+    <a href="#l-integration">Integration</a>
+    <a href="#l-rollout">Rollout</a>
+    <a href="#l-prompts">Prompt templates</a>
+  </nav>
+
+  <div class="hero" style="background:var(--bg);">
+    <div class="hero-label">Part 2 of 2</div>
+    <h1>Business-specific AI / LLM build framework</h1>
+    <div class="hero-sub">A structured methodology for designing, building, and deploying a custom AI layer for a specific business. Works for any company where discovery has been completed and readiness has been assessed. Eight layers — each depends on the one before it.</div>
+  </div>
+
+  <div class="page-body">
+
+    <!-- OVERVIEW -->
+    <div class="sec" id="l-overview">
+      <div class="sec-hd">
+        <div class="sec-title">The eight-layer build model</div>
+        <div class="sec-sub">A business-specific LLM is not a chatbot — it is a purpose-built intelligence layer that knows how the business works, where the rules are, who owns what, and what good output looks like. Each layer enables the one above it.</div>
+      </div>
+
+      <div class="callout">
+        <strong>The core distinction:</strong> A generic LLM knows everything about the world but nothing about your business. A business-specific AI knows everything about your business — its processes, terminology, clients, data, and rules — and uses that knowledge to generate outputs that are immediately useful without translation. The gap between generic and specific is the gap between "interesting" and "valuable."
+      </div>
+
+      <div class="phases">
+        <div class="phase" style="background:var(--teal-bg);">
+          <div class="phase-n">Foundation</div>
+          <div class="phase-t">Knowledge + Use cases</div>
+          <div class="phase-tm">Layers 1–2</div>
+          <ul><li>Knowledge architecture</li><li>Use case prioritisation</li><li>Data inventory</li></ul>
+        </div>
+        <div class="phase" style="background:var(--blue-bg);">
+          <div class="phase-n">Design</div>
+          <div class="phase-t">Model + Interface</div>
+          <div class="phase-tm">Layers 3–4</div>
+          <ul><li>Model selection</li><li>RAG vs fine-tuning</li><li>Interface per user type</li></ul>
+        </div>
+        <div class="phase" style="background:var(--amber-bg);">
+          <div class="phase-n">Infrastructure</div>
+          <div class="phase-t">Governance + Integration</div>
+          <div class="phase-tm">Layers 5–6</div>
+          <ul><li>Guardrails & rules</li><li>System connections</li><li>Audit & compliance</li></ul>
+        </div>
+        <div class="phase" style="background:var(--purple-bg);">
+          <div class="phase-n">Deployment</div>
+          <div class="phase-t">Rollout + Measurement</div>
+          <div class="phase-tm">Layers 7–8</div>
+          <ul><li>Pilot design</li><li>Training approach</li><li>Success metrics</li></ul>
+        </div>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- KNOWLEDGE ARCHITECTURE -->
+    <div class="sec" id="l-knowledge">
+      <div class="sec-hd">
+        <div class="sec-title">Layer 1 — Knowledge architecture</div>
+        <div class="sec-sub">Before writing a single prompt, define what the AI needs to know. Business knowledge has four types — each requires a different approach to capture, structure, and maintain it.</div>
+      </div>
+
+      <div class="g2">
+        <div>
+          <div class="layer">
+            <div class="layer-hd">
+              <div class="layer-num" style="background:var(--teal-bg);color:var(--teal-text);">1A</div>
+              <div class="layer-info"><div class="layer-title">Static knowledge — how the business works</div><div class="layer-sub">Operating model, processes, rules, org structure</div></div>
+            </div>
+            <div class="layer-body">
+              <div class="step"><strong>What it includes</strong>Process documentation, gate rules, checklists, silo boundaries, decision authority, terminology glossary, service catalogue, standard contract terms</div>
+              <div class="step"><strong>How to capture it</strong>Collect all existing documentation. Where it doesn't exist, conduct structured interviews. Convert to a consistent format — markdown or structured JSON. This becomes the AI's operating manual.</div>
+              <div class="step"><strong>How to maintain it</strong>Assign an owner for each domain. Version-controlled. Updated when process changes — not annually in a review. Stale static knowledge is worse than none.</div>
+            </div>
+          </div>
+
+          <div class="layer" style="margin-top:10px;">
+            <div class="layer-hd">
+              <div class="layer-num" style="background:var(--blue-bg);color:var(--blue-text);">1B</div>
+              <div class="layer-info"><div class="layer-title">Dynamic knowledge — live business state</div><div class="layer-sub">Current jobs, pipeline, clients, financial position</div></div>
+            </div>
+            <div class="layer-body">
+              <div class="step"><strong>What it includes</strong>Active job records, client history, pipeline status, AR aging, outstanding variations, current forward schedule, staff certifications, subcontractor register</div>
+              <div class="step"><strong>How to capture it</strong>API connections to live systems — CRM, job management, accounting platform. Where APIs don't exist, structured database sync on a defined cadence.</div>
+              <div class="step"><strong>Freshness requirement</strong>Define acceptable staleness per data type. Job status: real-time. AR aging: daily. Revenue actuals: monthly. Stale dynamic data produces confident wrong answers.</div>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="layer">
+            <div class="layer-hd">
+              <div class="layer-num" style="background:var(--amber-bg);color:var(--amber-text);">1C</div>
+              <div class="layer-info"><div class="layer-title">Historical knowledge — patterns and precedent</div><div class="layer-sub">Completed jobs, past decisions, historical performance</div></div>
+            </div>
+            <div class="layer-body">
+              <div class="step"><strong>What it includes</strong>Completed job records with actuals vs quoted, prior SoWs and Gate packs, historical financial data, past client correspondence, variation history, incident reports</div>
+              <div class="step"><strong>How to capture it</strong>Structured export and ingestion of historical system data. Document parsing for unstructured historical files. Define how far back — typically 24–36 months minimum for pattern recognition to be meaningful.</div>
+              <div class="step"><strong>Primary use</strong>Pattern detection — what jobs overrun, what clients dispute, what scopes are typically incomplete. Informs AI recommendations for future similar situations.</div>
+            </div>
+          </div>
+
+          <div class="layer" style="margin-top:10px;">
+            <div class="layer-hd">
+              <div class="layer-num" style="background:var(--purple-bg);color:var(--purple-text);">1D</div>
+              <div class="layer-info"><div class="layer-title">Institutional knowledge — expertise & judgement</div><div class="layer-sub">The stuff in people's heads that isn't written down</div></div>
+            </div>
+            <div class="layer-body">
+              <div class="step"><strong>What it includes</strong>Pricing intuition, client relationship nuance, site-specific knowledge, subcontractor assessments, escalation judgement, safety experience</div>
+              <div class="step"><strong>How to capture it</strong>Structured interviews with key people. Scenario-based questioning: "what do you do when X?" Convert to decision trees or rule sets. This is the hardest knowledge to capture and the most valuable.</div>
+              <div class="step"><strong>Critical note</strong>This knowledge often lives in one or two people. Its capture is also a key-person risk mitigation exercise — not just an AI input.</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- USE CASE DESIGN -->
+    <div class="sec" id="l-usecases">
+      <div class="sec-hd">
+        <div class="sec-title">Layer 2 — Use case design and prioritisation</div>
+        <div class="sec-sub">Not all use cases are equal. Prioritise on two axes: value delivered (time saved, errors prevented, cash recovered) and readiness (does the data and process exist to support it today). Start in the top-right quadrant.</div>
+      </div>
+
+      <div class="card">
+        <div style="overflow-x:auto;">
+          <table class="matrix">
+            <thead>
+              <tr><th>Use case type</th><th>What the AI does</th><th>Data needed</th><th>Value driver</th><th>When to build</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>Completeness checking</td><td>Reviews a document or submission against a defined checklist. Pass/fail with specific deficiencies listed.</td><td>Checklist rules (static) + submitted document</td><td>Prevents defects passing downstream</td><td>Phase 1 — highest readiness, immediate value</td></tr>
+              <tr><td>Document generation</td><td>Produces a first-draft document from structured inputs — SoW, briefing, report, email.</td><td>Static knowledge + dynamic job data + templates</td><td>Time saved + consistency</td><td>Phase 2 — after static knowledge is structured</td></tr>
+              <tr><td>Notification & escalation</td><td>Monitors timing rules and data conditions. Fires alerts to the right person at the right time.</td><td>Dynamic data + rules engine + contact directory</td><td>SLA compliance + exception surfacing</td><td>Phase 1–2 — rules-based, not AI-dependent</td></tr>
+              <tr><td>Pipeline intelligence</td><td>Surfaces renewal risk, dormant accounts, next-best-action from CRM data.</td><td>Clean, active CRM with history</td><td>Revenue protection + proactive sales</td><td>Phase 2–3 — requires CRM discipline first</td></tr>
+              <tr><td>Financial reporting</td><td>Assembles structured financial data into decision-ready reports with exception flags.</td><td>Reconciled accounting platform + job data</td><td>Leadership intelligence + time saved</td><td>Phase 3 — requires clean financial data</td></tr>
+              <tr><td>Pattern analysis</td><td>Identifies trends across jobs — margin overruns, variation rates, client dispute patterns.</td><td>24m+ historical job data with actuals</td><td>Systematic margin improvement</td><td>Phase 3–4 — requires historical data depth</td></tr>
+              <tr><td>Predictive forecasting</td><td>Projects cashflow, resource needs, or pipeline from live data and historical patterns.</td><td>All of the above, plus time-series history</td><td>Risk management + planning accuracy</td><td>Phase 4 — built last, depends on everything else</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="callout">
+        <strong>The prioritisation rule:</strong> Build completeness checking and notification first — they require the least AI sophistication, have the clearest ROI, and create the data discipline that makes everything else possible. Document generation is high-value but requires knowledge architecture to be complete first. Forecasting is last because it requires everything else to be working and accurate.
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- MODEL SELECTION -->
+    <div class="sec" id="l-model">
+      <div class="sec-hd">
+        <div class="sec-title">Layer 3 — Model selection and architecture</div>
+        <div class="sec-sub">Three architectural approaches — each with different cost, control, and capability profiles. Most business-specific AI systems use RAG as the primary approach, with prompt engineering for structure and fine-tuning reserved for specific, high-volume tasks.</div>
+      </div>
+
+      <div class="g3">
+        <div class="card">
+          <div class="card-hd">
+            <div>
+              <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-t);margin-bottom:5px;">Approach 1</div>
+              <div class="card-title">Prompt engineering</div>
+            </div>
+            <span class="tag t-green">Start here</span>
+          </div>
+          <div class="card-body">
+            <p>Structured prompts with business context injected at runtime. The model receives the operating rules, the specific task, and relevant data — and produces the output.</p>
+            <p style="margin-top:8px;"><strong style="font-weight:500;">Best for:</strong> Document generation, completeness checking, classification, drafting. Any task where the rules are definable and the output is structured.</p>
+            <p style="margin-top:8px;"><strong style="font-weight:500;">Not suitable for:</strong> Tasks requiring deep reasoning over large document sets, or where context exceeds prompt window limits.</p>
+          </div>
+          <div class="card-foot"><span class="tag t-green">Low cost</span><span class="tag t-green">Fast to deploy</span><span class="tag t-green">Easy to update</span></div>
+        </div>
+        <div class="card" style="border:2px solid var(--blue);">
+          <div style="background:var(--blue-bg);color:var(--blue-text);font-size:11px;font-weight:600;padding:4px 12px;border-radius:4px;display:inline-block;margin-bottom:10px;">Primary approach</div>
+          <div class="card-hd">
+            <div>
+              <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-t);margin-bottom:5px;">Approach 2</div>
+              <div class="card-title">RAG — retrieval-augmented generation</div>
+            </div>
+          </div>
+          <div class="card-body">
+            <p>Business knowledge stored in a vector database. At query time, the most relevant knowledge chunks are retrieved and injected into the prompt context. The model answers using retrieved business knowledge.</p>
+            <p style="margin-top:8px;"><strong style="font-weight:500;">Best for:</strong> Large knowledge bases (documentation, job history, client records), question answering, document search, context-aware generation across many sources.</p>
+            <p style="margin-top:8px;"><strong style="font-weight:500;">Key requirement:</strong> Clean, structured source documents. Garbage in, garbage out — RAG amplifies data quality issues.</p>
+          </div>
+          <div class="card-foot"><span class="tag t-blue">Knowledge stays current</span><span class="tag t-blue">No retraining</span><span class="tag t-blue">Traceable sources</span></div>
+        </div>
+        <div class="card">
+          <div class="card-hd">
+            <div>
+              <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.07em;color:var(--text-t);margin-bottom:5px;">Approach 3</div>
+              <div class="card-title">Fine-tuning</div>
+            </div>
+            <span class="tag t-amber">Use sparingly</span>
+          </div>
+          <div class="card-body">
+            <p>The base model is retrained on business-specific examples — teaching it the specific output format, tone, and patterns of this business. Expensive and requires retraining when processes change.</p>
+            <p style="margin-top:8px;"><strong style="font-weight:500;">Best for:</strong> Very high-volume, consistent tasks where format is critical and examples number in the thousands — e.g. auto-coding transactions, classifying job types.</p>
+            <p style="margin-top:8px;"><strong style="font-weight:500;">Not suitable for:</strong> Most business AI use cases. Prompt engineering + RAG achieves equivalent results with less cost and more flexibility.</p>
+          </div>
+          <div class="card-foot"><span class="tag t-amber">High cost</span><span class="tag t-amber">Retraining required</span><span class="tag t-amber">Use for specific tasks</span></div>
+        </div>
+      </div>
+
+      <div class="card" style="margin-top:12px;">
+        <div class="card-hd"><div class="card-title">Recommended model stack for a business-specific AI</div></div>
+        <div class="card-body">
+          <p><strong style="font-weight:500;">Base model:</strong> Claude (Anthropic) or GPT-4o (OpenAI) for primary generation tasks. Both have long context windows, strong instruction following, and JSON output modes. Claude has stronger document analysis; GPT-4o has broader tool ecosystem.</p>
+          <p style="margin-top:8px;"><strong style="font-weight:500;">Embedding model:</strong> OpenAI text-embedding-3-large or Cohere embed-v3 for RAG vector search. Creates the semantic search layer over your business knowledge base.</p>
+          <p style="margin-top:8px;"><strong style="font-weight:500;">Vector database:</strong> Pinecone (managed, fast), Weaviate (open source, flexible), or pgvector (Postgres extension — lowest friction if you're already on Postgres).</p>
+          <p style="margin-top:8px;"><strong style="font-weight:500;">Orchestration:</strong> LangChain or LlamaIndex for connecting retrieval, prompt construction, and generation. Vercel AI SDK if the team is Node.js-native (aligns with FM Farm stack).</p>
+        </div>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- INTERFACE DESIGN -->
+    <div class="sec" id="l-interface">
+      <div class="sec-hd">
+        <div class="sec-title">Layer 4 — Interface design per user type</div>
+        <div class="sec-sub">Different users need different interfaces to the same underlying AI. A CEO dashboard, a field crew mobile form, and a finance admin document review are all driven by the same AI layer — but they look and behave completely differently.</div>
+      </div>
+
+      <div class="g2">
+        <div>
+          <div class="card">
+            <div class="card-hd"><div class="card-title">Interface types by user</div></div>
+            <div class="card-body">
+              <p><strong style="font-weight:500;">Leadership (MD / GM):</strong> Dashboard with KPI cards, exception register, and trend charts. AI surfaces anomalies and assigns owners. No prompting required — the intelligence is pushed, not pulled.</p>
+              <p style="margin-top:8px;"><strong style="font-weight:500;">Silo heads (Commercial / Ops / Finance):</strong> Workflow-embedded AI — appears at specific steps in an existing process. Gate pack review, quote generation assist, financial anomaly flag. Integrated into the tool they already use.</p>
+              <p style="margin-top:8px;"><strong style="font-weight:500;">State managers:</strong> Document generation and review interface. Input job parameters, receive a pre-populated document. Review, edit, submit. AI is invisible — they see a better form, not an AI.</p>
+              <p style="margin-top:8px;"><strong style="font-weight:500;">Field crew (supervisors):</strong> Mobile-first, minimal interface. Structured photo upload, daily timesheet, variation flag form. Maximum 3 taps to complete any action. Offline-first. No chat interface — guided forms only.</p>
+              <p style="margin-top:8px;"><strong style="font-weight:500;">Finance administrator:</strong> Document review interface with AI pre-population. Gate 2 checklist pre-checked from submitted pack. Invoice draft pre-generated. Exception flags with suggested actions.</p>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="card">
+            <div class="card-hd"><div class="card-title">Interface design principles</div></div>
+            <div class="card-body">
+              <p><strong style="font-weight:500;">AI should be invisible at field level.</strong> A supervisor on site who's been doing this job for 10 years will not use a chatbot. The AI surface for field crews is a structured form that submits to the right place automatically — they don't know or care that AI processed it.</p>
+              <p style="margin-top:8px;"><strong style="font-weight:500;">Leadership sees outputs, not inputs.</strong> The MD doesn't want to prompt an AI. They want a screen that tells them the three things that need their attention today. Push intelligence to them.</p>
+              <p style="margin-top:8px;"><strong style="font-weight:500;">Middle management reviews, not generates.</strong> State managers and silo heads are reviewers and editors, not authors. AI drafts, they approve. This is faster and they retain control.</p>
+              <p style="margin-top:8px;"><strong style="font-weight:500;">Chat is a power user interface, not a default.</strong> A freeform chat interface is useful for silo heads asking complex questions. It is not the right interface for most business AI interactions.</p>
+            </div>
+          </div>
+          <div class="listen" style="margin-top:10px;">
+            <div class="listen-hd">Questions to ask about interface</div>
+            <div class="li">What does the user do 10–20 times a day that this AI should help with?</div>
+            <div class="li">What device do they use for that task — and when, and where?</div>
+            <div class="li">What is the minimum viable interaction — can it be under 30 seconds?</div>
+            <div class="li">What do they do today that the AI should replace — not add to their workload?</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- GOVERNANCE -->
+    <div class="sec" id="l-governance">
+      <div class="sec-hd">
+        <div class="sec-title">Layer 5 — Governance, guardrails, and rules</div>
+        <div class="sec-sub">A business-specific AI must know not just what it can do, but what it must not do. Governance defines the boundaries, the human-in-the-loop requirements, and the audit trail. This is designed before the first line of code, not added after.</div>
+      </div>
+
+      <div class="g2">
+        <div>
+          <div class="card">
+            <div class="card-hd"><div class="card-title">Autonomy levels — what AI can do alone vs with approval</div></div>
+            <div class="card-body">
+              <p><strong style="font-weight:500;">Fully autonomous (no human required):</strong> Completeness checking, SLA timers, notification sending, data retrieval, document pre-population, read-only reporting.</p>
+              <p style="margin-top:8px;"><strong style="font-weight:500;">AI drafts, human approves:</strong> Document generation (SoW, Gate packs, invoices, reports), exception owner assignment, escalation routing, client communications.</p>
+              <p style="margin-top:8px;"><strong style="font-weight:500;">AI informs, human decides:</strong> Variation pricing, contract terms, hiring decisions, strategic recommendations, anything with commercial or legal consequence.</p>
+              <p style="margin-top:8px;"><strong style="font-weight:500;">AI never touches:</strong> Final financial authorisations, client relationship decisions, performance management, safety stop-work authority, anything requiring a licensed professional judgement.</p>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="card">
+            <div class="card-hd"><div class="card-title">Non-negotiable guardrails</div></div>
+            <div class="card-body">
+              <p><strong style="font-weight:500;">Confidence thresholds:</strong> The AI must express uncertainty when it is uncertain. "I don't have enough information" is a valid and required output. False confidence is worse than no answer.</p>
+              <p style="margin-top:8px;"><strong style="font-weight:500;">Source traceability:</strong> Every AI output that draws on specific knowledge must cite the source. Reviewers need to know where a claim came from to trust and verify it.</p>
+              <p style="margin-top:8px;"><strong style="font-weight:500;">Audit trail:</strong> All AI-generated content that enters a business process must be logged — what was generated, when, by whom, what prompt was used, what the user did with it.</p>
+              <p style="margin-top:8px;"><strong style="font-weight:500;">Override always available:</strong> Any AI recommendation or output must be overridable by a human without friction. The AI assists; the human decides.</p>
+              <p style="margin-top:8px;"><strong style="font-weight:500;">Data privacy:</strong> Client names, financial figures, and personal data never leave the business's controlled environment. No sending sensitive data to external AI APIs without proper data handling agreements in place.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- INTEGRATION -->
+    <div class="sec" id="l-integration">
+      <div class="sec-hd">
+        <div class="sec-title">Layer 6 — System integration map</div>
+        <div class="sec-sub">The AI layer sits between your existing systems and your users — pulling data from connected systems, applying intelligence, and pushing outputs back. Map every integration point before building.</div>
+      </div>
+
+      <div class="card">
+        <div style="overflow-x:auto;">
+          <table class="matrix">
+            <thead>
+              <tr><th>System</th><th>Data flowing in (AI reads)</th><th>Data flowing out (AI writes)</th><th>Integration method</th><th>Priority</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>CRM</td><td>Pipeline, client records, deal history, contact data</td><td>Activity logs, renewal alerts, next-action prompts</td><td>REST API or webhook</td><td>Phase 2</td></tr>
+              <tr><td>Accounting platform (Xero)</td><td>Invoice status, AR aging, payment history, P&L data</td><td>Draft invoices, journal entries (for review)</td><td>Xero API</td><td>Phase 3</td></tr>
+              <tr><td>Job management system</td><td>Job records, completion status, timesheets, gate pack status</td><td>Gate completeness scores, field prompts, Gate 2 progress</td><td>Internal API or DB direct</td><td>Phase 1</td></tr>
+              <tr><td>Document storage</td><td>SoWs, Gate packs, SWMS, completion reports</td><td>Generated documents, completeness reports</td><td>S3 / SharePoint API</td><td>Phase 2</td></tr>
+              <tr><td>Communication (email / Slack)</td><td>Thread context for dispute resolution and variation history</td><td>Notification dispatch, AR reminders, alerts</td><td>SMTP / Slack API / SendGrid</td><td>Phase 1</td></tr>
+              <tr><td>Payroll / timesheet system</td><td>Approved timesheets, crew allocations</td><td>Payroll run triggers (for review)</td><td>API or file-based sync</td><td>Phase 3</td></tr>
+              <tr><td>Mobile field interface</td><td>Daily photos, timesheet submissions, variation flags</td><td>Job briefing docs, safety checklists, site instructions</td><td>Internal app API</td><td>Phase 2</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- ROLLOUT -->
+    <div class="sec" id="l-rollout">
+      <div class="sec-hd">
+        <div class="sec-title">Layer 7 — Rollout and adoption design</div>
+        <div class="sec-sub">The rollout is not a training event — it is a sustained behaviour change programme. Design it that way from the start. The pilot selection and champion identification matter as much as the technology.</div>
+      </div>
+
+      <div class="g2">
+        <div>
+          <div class="card">
+            <div class="card-hd"><div class="card-title">Pilot design principles</div></div>
+            <div class="card-body">
+              <p><strong style="font-weight:500;">Pick the highest-readiness state or team, not the hardest problem.</strong> The first pilot should produce a visible win fast. Success breeds adoption. Failure in a pilot kills momentum across the whole business.</p>
+              <p style="margin-top:8px;"><strong style="font-weight:500;">One use case, fully embedded, before the second.</strong> A partial rollout of five use cases produces five half-adopted tools. One use case that becomes habitual produces the platform for everything else.</p>
+              <p style="margin-top:8px;"><strong style="font-weight:500;">Champion first, mandate second.</strong> Identify the person who will love this — naturally curious, trusted by peers, early adopter. Make them the champion before any broader rollout. Their credibility carries adoption where top-down instruction doesn't.</p>
+              <p style="margin-top:8px;"><strong style="font-weight:500;">Measure during the pilot, not after.</strong> Define what success looks like before launch. Instrument usage, output quality, and time saved from day one. Data from the pilot justifies the rollout.</p>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div class="card">
+            <div class="card-hd"><div class="card-title">The 90-day adoption sequence</div></div>
+            <div class="card-body">
+              <p><strong style="font-weight:500;">Days 1–14 — Champion onboarding:</strong> Champion uses the tool on real work. Daily feedback loop. Fixes and refinements made in real time. Champion builds the internal narrative.</p>
+              <p style="margin-top:8px;"><strong style="font-weight:500;">Days 15–30 — Small group pilot:</strong> 3–5 users from the same team. Champion leads peer training. No formal training sessions — learning happens on real jobs.</p>
+              <p style="margin-top:8px;"><strong style="font-weight:500;">Days 31–60 — Measure and refine:</strong> Quantify time saved, error rate reduction, output quality. Fix the top 3 friction points identified in the pilot. Build the business case for broader rollout.</p>
+              <p style="margin-top:8px;"><strong style="font-weight:500;">Days 61–90 — Broader rollout:</strong> Champion presents pilot results to the wider team. Top-down endorsement from the GM. New users onboarded with champion support, not IT support. Formal training is a one-pager and a 20-minute demo, not a course.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- PROMPT TEMPLATES -->
+    <div class="sec" id="l-prompts">
+      <div class="sec-hd">
+        <div class="sec-title">Layer 8 — System prompt architecture and templates</div>
+        <div class="sec-sub">The system prompt is the operating constitution of a business-specific AI. It tells the model who it is, what it knows, what it must and must not do, and how to format its outputs. This is written once and maintained as the business evolves.</div>
+      </div>
+
+      <div class="callout">
+        <strong>The system prompt structure:</strong> Every business AI system prompt has the same five sections — identity, knowledge context, task rules, output format, and guardrails. The sections below are templates. Replace the bracketed placeholders with the business-specific content captured during discovery and knowledge architecture.
+      </div>
+
+      <div class="card">
+        <div class="card-hd"><div class="card-title">Section 1 — Identity and role</div></div>
+        <div class="prompt-block">You are <span class="ph">[BUSINESS NAME]</span>'s AI assistant, built specifically to support the <span class="ph">[SILO / ROLE NAME]</span> function.
+
+You know how <span class="ph">[BUSINESS NAME]</span> operates — the structure, the processes, the rules, and the people. When you produce an output, it should require minimal editing to be used directly in the business.
+
+Your primary users are <span class="ph">[USER TYPES]</span>. They are <span class="ph">[EXPERTISE LEVEL]</span> and expect <span class="ph">[TONE: direct / collaborative / formal]</span> outputs.
+
+<span class="cm"># Adapt identity section per deployment — a field crew tool sounds different to a leadership dashboard.</span></div>
+      </div>
+
+      <div class="card" style="margin-top:10px;">
+        <div class="card-hd"><div class="card-title">Section 2 — Operating rules and process knowledge</div></div>
+        <div class="prompt-block"><span class="cm">## Core operating rules (inject from static knowledge base)</span>
+
+The following rules govern how <span class="ph">[BUSINESS NAME]</span> operates and must be applied to every output:
+
+<span class="ph">[RULE 1 — e.g. "Gate 1 packs must contain all 8 components before Operations accepts them. A pack missing any component must be returned with specific deficiencies listed."]</span>
+
+<span class="ph">[RULE 2 — e.g. "Variations must be flagged to Sales before any out-of-scope work proceeds. No variation is priced or communicated to the client by Operations."]</span>
+
+<span class="ph">[RULE 3 — e.g. "Invoice cycle time from Gate 2 acceptance must not exceed 48 hours. Delays are a Finance accountability."]</span>
+
+<span class="cm"># Add all hard rules from the operating model here. These are the non-negotiables the AI must always apply.</span>
+
+<span class="cm">## Retrieved context (injected at runtime via RAG)</span>
+{retrieved_context}
+
+<span class="cm"># This placeholder is populated by the RAG system at query time with relevant documents from the knowledge base.</span></div>
+      </div>
+
+      <div class="card" style="margin-top:10px;">
+        <div class="card-hd"><div class="card-title">Section 3 — Task-specific instructions (varies per use case)</div></div>
+        <div class="prompt-block"><span class="cm">## For completeness checking</span>
+You are reviewing a <span class="ph">[DOCUMENT TYPE]</span> submitted by <span class="ph">[SUBMITTER ROLE]</span>.
+Check it against the following required items:
+<span class="ph">[CHECKLIST ITEMS]</span>
+
+Output format:
+- Overall: PASS or RETURN
+- If RETURN: list each missing item with a one-sentence explanation of what is required
+- Do not pass a pack with any missing items, regardless of context provided
+
+<span class="cm">## For document generation</span>
+Generate a <span class="ph">[DOCUMENT TYPE]</span> using the following inputs:
+<span class="ph">{structured_inputs}</span>
+
+The document must include: <span class="ph">[REQUIRED SECTIONS]</span>
+The document must not include: <span class="ph">[EXCLUDED CONTENT]</span>
+Format: <span class="ph">[FORMAT SPECIFICATION]</span>
+Flag anything that is unclear or missing from the inputs rather than making assumptions.
+
+<span class="cm">## For exception detection</span>
+Review the following data and identify any values outside the defined thresholds:
+<span class="ph">{financial_data}</span>
+
+Thresholds: <span class="ph">[THRESHOLD LIST]</span>
+For each exception: state the metric, the value, the threshold breached, and suggest the named owner based on silo accountability rules.</div>
+      </div>
+
+      <div class="card" style="margin-top:10px;">
+        <div class="card-hd"><div class="card-title">Section 4 — Guardrails (universal — applies to every business AI)</div></div>
+        <div class="prompt-block"><span class="cm">## What you must always do</span>
+- If you are uncertain, say so explicitly. Do not generate a confident answer when the information is insufficient.
+- Cite the specific source or rule when making a claim that comes from the business knowledge base.
+- Flag if an input conflicts with a known operating rule — do not resolve the conflict yourself.
+- Produce outputs in the format specified. Structure and consistency matter more than completeness.
+
+<span class="cm">## What you must never do</span>
+- Do not make pricing or commercial decisions — flag for human review.
+- Do not communicate directly to clients — generate drafts for human approval.
+- Do not approve safety-critical decisions — the WHS Manager / safety function has final authority.
+- Do not generate outputs that could be mistaken for a final decision when human approval is required.
+- Do not store, repeat, or reference sensitive personal data beyond what is required for the immediate task.
+
+<span class="cm">## If you cannot complete the task</span>
+State what information is missing and which person or system would have it. Do not attempt to complete the task with insufficient information.</div>
+      </div>
+
+      <div class="card" style="margin-top:10px;">
+        <div class="card-hd"><div class="card-title">Prompt template library — build these per use case</div></div>
+        <div class="card-body">
+          <p style="margin-bottom:10px;">For each defined use case, create a named, versioned prompt template stored in the knowledge base. Name examples:</p>
+        </div>
+        <div class="doclist">
+          <div class="di">GATE1_COMPLETENESS_CHECK_v1 — reviews a submitted Gate 1 pack against the 8-item checklist</div>
+          <div class="di">GATE2_COMPLETENESS_CHECK_v1 — reviews Gate 2 pack for invoice readiness</div>
+          <div class="di">SOW_GENERATION_v1 — generates a first-draft Scope of Works from structured job inputs</div>
+          <div class="di">FIELD_BRIEFING_GENERATION_v1 — pre-populates Field Handover briefing from Gate 1 data</div>
+          <div class="di">GATE3_EXCEPTION_DETECT_v1 — reviews financial data against thresholds and flags exceptions</div>
+          <div class="di">VARIATION_FLAG_DRAFT_v1 — generates a structured variation notification from field inputs</div>
+          <div class="di">INVOICE_COVER_GENERATION_v1 — generates invoice cover communication from job data</div>
+          <div class="di">SWMS_REVIEW_ASSIST_v1 — reviews SWMS against hazard control library for the job type</div>
+          <div class="di">CLIENT_PROGRESS_UPDATE_v1 — drafts a progress update from daily field report data</div>
+          <div class="di">AR_REMINDER_SEQUENCE_v1 — generates payment reminders at Day 7, 14, 30 cadence</div>
+        </div>
+      </div>
+    </div>
+
+    <hr class="divider">
+
+    <!-- MEASUREMENT -->
+    <div class="sec" style="padding-bottom:20px;">
+      <div class="sec-hd">
+        <div class="sec-title">Measuring success — the metrics that matter</div>
+        <div class="sec-sub">Before you build anything, define what you will measure and how. The measurement framework is agreed with the client during scoping — not designed after deployment when success is contested.</div>
+      </div>
+
+      <div class="g3">
+        <div class="card">
+          <div class="card-hd"><div class="card-title">Process efficiency metrics</div></div>
+          <div class="card-body">
+            <p>Gate 1 first-pass acceptance rate (before / after). Gate 2 submission time from completion. Invoice cycle time Gate 2 → issued. Time to produce Gate 3 pack. Variation documentation rate.</p>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-hd"><div class="card-title">Financial impact metrics</div></div>
+          <div class="card-body">
+            <p>Days Sales Outstanding trend. Cashflow gap reduction (D0 to invoice). AR over 60 days as % of total. Invoice dispute rate. Gross margin actual vs quoted by job type.</p>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-hd"><div class="card-title">Adoption and quality metrics</div></div>
+          <div class="card-body">
+            <p>Daily active users per user type. AI output acceptance rate (used vs discarded). Time saved per task (surveyed). Errors caught by AI before passing downstream. User satisfaction score at 30 / 90 days.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+function showMain(id, btn) {
+  document.querySelectorAll('.main-page').forEach(p => p.classList.remove('on'));
+  document.querySelectorAll('.topnav-btn').forEach(b => b.classList.remove('on'));
+  document.getElementById('main-' + id).classList.add('on');
+  btn.classList.add('on');
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+
+function updateScore() {
+  const sliders = document.querySelectorAll('.score-slider');
+  const vals = Array.from(sliders).map(s => parseInt(s.value));
+  vals.forEach((v, i) => { document.getElementById('v' + i).textContent = v; });
+  const total = vals.reduce((a, b) => a + b, 0);
+  const min = Math.min(...vals);
+  const pct = Math.round(total / 40 * 100);
+  const hl = document.getElementById('score-headline');
+  const desc = document.getElementById('score-desc');
+  const res = document.getElementById('score-result');
+  hl.textContent = 'Overall score: ' + total + ' / 40 (' + pct + '%)';
+  if (min <= 1) {
+    res.style.background = 'var(--red-bg)';
+    desc.textContent = 'One or more dimensions scores 1 — this is a blocker. Address that dimension as a prerequisite before any AI work begins. Proceeding without it will produce unreliable outputs.';
+  } else if (total <= 20) {
+    res.style.background = 'var(--red-bg)';
+    desc.textContent = 'Low readiness. The business needs a foundation phase before AI integration. Focus on process documentation, data quality, and leadership alignment first. AI comes second.';
+  } else if (total <= 28) {
+    res.style.background = 'var(--amber-bg)';
+    desc.textContent = 'Partial readiness. A foundation phase is needed in specific dimensions before AI can deliver reliably. Build in the high-readiness areas first; sequence prerequisites for the low-scoring ones.';
+  } else if (total <= 34) {
+    res.style.background = 'var(--teal-bg)';
+    desc.textContent = 'Good readiness. Proceed with a phased strategy — start with the highest-value, highest-readiness use cases. Monitor the lower-scoring dimensions during Phase 1 and address them as they become constraints.';
+  } else {
+    res.style.background = 'var(--green-bg)';
+    desc.textContent = 'High readiness. The business can move directly to Phase 2–3 use cases. Focus on speed to value — identify the two or three highest-impact use cases and deliver them within 90 days.';
+  }
+}
+
+const subnavs = document.querySelectorAll('.subnav');
+subnavs.forEach(nav => {
+  const links = nav.querySelectorAll('a');
+  links.forEach(a => {
+    a.addEventListener('click', e => {
+      links.forEach(l => l.classList.remove('on'));
+      a.classList.add('on');
+    });
+  });
+});
+</script>
+</body>
+</html>
